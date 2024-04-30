@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { getAllDomains } from "~/helpers/domains/supabasehelper";
 import { DomainColumns } from "~/helpers/domains/domainhelper";
+import type { CombinedDomainInfo } from "~/types/bardate_domains";
 
 import { useInfiniteScroll } from "@vueuse/core";
 const from = ref(0) as Ref<number>;
 const to = ref(10) as Ref<number>;
 const el = ref<HTMLElement | null>(null);
-const domains = ref(await getAllDomains(from.value, to.value));
+const domains = ref([] as CombinedDomainInfo[]);
 const isBusy = ref(false);
 const columns = DomainColumns;
 const noMoreData = ref(false);
@@ -14,6 +15,10 @@ const q = ref("");
 const sort = ref({
   column: "name",
   direction: "desc",
+});
+
+onMounted(async () => {
+  domains.value = await getAllDomains(from.value, to.value);
 });
 
 const filteredRows = computed(() => {

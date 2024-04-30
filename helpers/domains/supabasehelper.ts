@@ -7,6 +7,6 @@ export async function getAllDomains(from: number, to: number) {
   const { data } = await supabaseWrapper
     .select<CombinedDomainInfo[]>("combined_domains_view", "*")
     .range(from, to);
-  console.log(data);
+
   return data as CombinedDomainInfo[];
 }

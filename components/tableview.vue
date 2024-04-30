@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { getAllDomains } from "~/helpers/domains/supabasehelper";
-
 import { useInfiniteScroll } from "@vueuse/core";
 const from = ref(0) as Ref<number>;
 const to = ref(10) as Ref<number>;
 const el = ref<HTMLElement | null>(null);
 const domains = ref(await getAllDomains(from.value, to.value));
+const isBusy = ref(false);
 
 const columns = [
   {
@@ -18,6 +18,46 @@ const columns = [
     label: "Release",
     sortable: true,
   },
+  // {
+  //   key: "domain_created_at",
+  //   label: "Domän skapad",
+  //   sortable: true,
+  // },
+  // {
+  //   key: "updated_at",
+  //   label: "Uppdaterad",
+  //   sortable: true,
+  // },
+  // {
+  //   key: "ttl",
+  //   label: "TTL",
+  //   sortable: true,
+  // },
+  // {
+  //   key: "info_created_at",
+  //   label: "Info skapad",
+  //   sortable: true,
+  // },
+  {
+    key: "url_length",
+    label: "URL-längd",
+    sortable: true,
+  },
+  {
+    key: "available",
+    label: "Tillgänglig",
+    sortable: true,
+  },
+  // {
+  //   key: "cctld",
+  //   label: "Landskod",
+  //   sortable: true,
+  // },
+  // {
+  //   key: "days_until_release",
+  //   label: "Dagar till release",
+  //   sortable: true,
+  // },
 ];
 
 const noMoreData = ref(false);
@@ -33,14 +73,15 @@ useInfiniteScroll(
     from.value = to.value;
     to.value += 10;
 
+    isBusy.value = true;
     var moreData = await getAllDomains(from.value, to.value);
     domains.value.push(...moreData);
-
+    isBusy.value = false;
     if (moreData.length == 0) {
       noMoreData.value = true;
     }
   },
-  { distance: 200 }
+  { distance: 10 }
 );
 
 const sort = ref({
@@ -66,7 +107,7 @@ const filteredRows = computed(() => {
 <template>
   <div>
     <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
-      <UInput v-model="q" placeholder="Filter people..." />
+      <UInput v-model="q" placeholder="Filtrera domäner..." />
     </div>
 
     <UTable
@@ -83,7 +124,15 @@ const filteredRows = computed(() => {
       }"
       :rows="filteredRows"
       :columns="columns"
-    />
-    <span class="end py-28" ref="el"></span>
+    >
+      <template #available-data="{ row }">
+        <span v-if="row.available">✔️</span>
+        <span v-if="!row.available">Nej</span>
+      </template>
+    </UTable>
+
+    <div ref="el" class="flex justify-center py-10">
+      <span v-if="isBusy" class="loading loading-spinner"></span>
+    </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  // css: ["@/assets/css/main.css"],
+  css: ["@/assets/css/main.css"],
   app: {
     pageTransition: { name: "page", mode: "out-in" },
     head: {
@@ -19,7 +19,13 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: false },
 
-  modules: ["@nuxt/ui", "@nuxtjs/supabase", "@nuxtjs/device", "@nuxt/image"],
+  modules: [
+    "@nuxt/ui",
+    "@nuxtjs/supabase",
+    "@nuxtjs/device",
+    "@nuxt/image",
+    "@nuxtjs/google-fonts",
+  ],
 
   plugins: [{ src: "~/plugins/supabasewrapper.ts" }],
   vite: {
@@ -49,5 +55,19 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {},
     },
+  },
+  googleFonts: {
+    families: {
+      Nunito: [300, 700, 900],
+      // Italiana: [400],
+      Namdhinggo: [400, 600, 800],
+    },
+    display: "swap",
+    download: true,
+    prefetch: true,
+    preconnect: true,
+    overwriting: false,
+    preload: true,
+    useStylesheet: true,
   },
 });

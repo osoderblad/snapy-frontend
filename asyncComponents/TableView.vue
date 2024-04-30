@@ -2,7 +2,6 @@
 import { getAllDomains } from "~/helpers/domains/supabasehelper";
 import { DomainColumns } from "~/helpers/domains/domainhelper";
 import type { CombinedDomainInfo } from "~/types/bardate_domains";
-
 import { useInfiniteScroll } from "@vueuse/core";
 const from = ref(0) as Ref<number>;
 const to = ref(10) as Ref<number>;
@@ -26,7 +25,7 @@ const filteredRows = computed(() => {
     return domains.value;
   }
 
-  return domains.value.filter((domain) => {
+  return domains.value.filter((domain: any) => {
     return Object.values(domain).some((value) => {
       return String(value).toLowerCase().includes(q.value.toLowerCase());
     });

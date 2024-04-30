@@ -45,11 +45,11 @@ export default defineNuxtConfig({
   // },
   sourcemap: false,
   srcDir: "./",
-  experimental: {
-    asyncEntry: true,
-    crossOriginPrefetch: true,
-    writeEarlyHints: true,
-  },
+  // experimental: {
+  //   asyncEntry: true,
+  //   crossOriginPrefetch: true,
+  //   writeEarlyHints: true,
+  // },
   postcss: {
     plugins: {
       tailwindcss: {},

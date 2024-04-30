@@ -1,66 +1,32 @@
 <script setup lang="ts">
 import { getAllDomains } from "~/helpers/domains/supabasehelper";
+import { DomainColumns } from "~/helpers/domains/domainhelper";
+
 import { useInfiniteScroll } from "@vueuse/core";
 const from = ref(0) as Ref<number>;
 const to = ref(10) as Ref<number>;
 const el = ref<HTMLElement | null>(null);
 const domains = ref(await getAllDomains(from.value, to.value));
 const isBusy = ref(false);
-
-const columns = [
-  {
-    key: "name",
-    label: "Namn",
-    sortable: true,
-  },
-  {
-    key: "release_at",
-    label: "Release",
-    sortable: true,
-  },
-  // {
-  //   key: "domain_created_at",
-  //   label: "Domän skapad",
-  //   sortable: true,
-  // },
-  // {
-  //   key: "updated_at",
-  //   label: "Uppdaterad",
-  //   sortable: true,
-  // },
-  // {
-  //   key: "ttl",
-  //   label: "TTL",
-  //   sortable: true,
-  // },
-  // {
-  //   key: "info_created_at",
-  //   label: "Info skapad",
-  //   sortable: true,
-  // },
-  {
-    key: "url_length",
-    label: "URL-längd",
-    sortable: true,
-  },
-  {
-    key: "available",
-    label: "Tillgänglig",
-    sortable: true,
-  },
-  // {
-  //   key: "cctld",
-  //   label: "Landskod",
-  //   sortable: true,
-  // },
-  // {
-  //   key: "days_until_release",
-  //   label: "Dagar till release",
-  //   sortable: true,
-  // },
-];
-
+const columns = DomainColumns;
 const noMoreData = ref(false);
+const q = ref("");
+const sort = ref({
+  column: "name",
+  direction: "desc",
+});
+
+const filteredRows = computed(() => {
+  if (!q.value) {
+    return domains.value;
+  }
+
+  return domains.value.filter((domain) => {
+    return Object.values(domain).some((value) => {
+      return String(value).toLowerCase().includes(q.value.toLowerCase());
+    });
+  });
+});
 
 useInfiniteScroll(
   el,
@@ -83,25 +49,6 @@ useInfiniteScroll(
   },
   { distance: 10 }
 );
-
-const sort = ref({
-  column: "name",
-  direction: "desc",
-});
-
-const q = ref("");
-
-const filteredRows = computed(() => {
-  if (!q.value) {
-    return domains.value;
-  }
-
-  return domains.value.filter((domain) => {
-    return Object.values(domain).some((value) => {
-      return String(value).toLowerCase().includes(q.value.toLowerCase());
-    });
-  });
-});
 </script>
 
 <template>
@@ -132,7 +79,7 @@ const filteredRows = computed(() => {
     </UTable>
 
     <div ref="el" class="flex justify-center py-10">
-      <span v-if="isBusy" class="loading loading-spinner"></span>
+      <span v-if="isBusy" class="loading loading-spinner opacity-50"></span>
     </div>
   </div>
 </template>

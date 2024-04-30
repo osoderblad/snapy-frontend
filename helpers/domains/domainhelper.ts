@@ -34,11 +34,11 @@ export const DomainColumns = [
     label: "URL-längd",
     sortable: true,
   },
-  {
-    key: "available",
-    label: "Tillgänglig",
-    sortable: true,
-  },
+  // {
+  //   key: "available",
+  //   label: "Tillgänglig",
+  //   sortable: true,
+  // },
   // {
   //   key: "cctld",
   //   label: "Landskod",

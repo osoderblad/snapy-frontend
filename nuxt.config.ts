@@ -28,21 +28,21 @@ export default defineNuxtConfig({
   ],
 
   plugins: [{ src: "~/plugins/supabasewrapper.ts" }],
-  vite: {
-    build: {
-      chunkSizeWarningLimit: 700,
-      rollupOptions: {
-        treeshake: true,
-      },
-    },
-  },
-  nitro: {
-    compressPublicAssets: { brotli: true, gzip: true },
-    minify: true,
-    prerender: {
-      routes: ["/"],
-    },
-  },
+  // vite: {
+  //   build: {
+  //     chunkSizeWarningLimit: 700,
+  //     rollupOptions: {
+  //       treeshake: true,
+  //     },
+  //   },
+  // },
+  // nitro: {
+  //   compressPublicAssets: { brotli: true, gzip: true },
+  //   minify: true,
+  //   prerender: {
+  //     routes: ["/"],
+  //   },
+  // },
   sourcemap: false,
   srcDir: "./",
   experimental: {

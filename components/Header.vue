@@ -3,7 +3,7 @@
     class="border-b -mb-px sticky top-0 z-50 border-gray-200 dark:border-gray-800 bg-opacity-85 backdrop-blur-[0.5rem]"
   >
     <div
-      class="mx-auto px-4 flex items-center justify-between gap-3 h-[--header-height]"
+      class="mx-auto px-4 flex items-center justify-between gap-3 h-[--header-height] my-3"
     >
       <div class="lg:flex-1 flex items-center gap-1.5">
         <a

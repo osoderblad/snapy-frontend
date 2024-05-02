@@ -1,15 +1,12 @@
 <template>
   <div>
     <span>Visar: {{ count }} av {{ fullCount }}</span>
-    {{ bottom }}
-    {{ isScrolling }}
-    <!-- {{ left }} -->
-    <!-- left, right, top, bottom -->
+
     <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
       <UInput v-model="q" placeholder="Filtrera domäner..." />
     </div>
 
-    <div class="min-h-[90vh] block">
+    <div class="block overflow-y-scroll" ref="el">
       <UTable
         :loading="isBusy"
         :sort="sort"
@@ -41,10 +38,10 @@ import type { CombinedDomainInfo } from "~/types/bardate_domains";
 import { useScroll } from "@vueuse/core";
 import { watchDebounced } from "@vueuse/core";
 
-const el = inject("scrollRef");
+const el = ref(null);
 
 const from = ref(0) as Ref<number>;
-const to = ref(10) as Ref<number>;
+const to = ref(20) as Ref<number>;
 const domains = ref([] as CombinedDomainInfo[]);
 const isBusy = ref(false);
 const columns = DomainColumns;

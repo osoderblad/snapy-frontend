@@ -4,14 +4,6 @@ export default defineNuxtConfig({
 
   app: {
     pageTransition: { name: "page", mode: "out-in" },
-    head: {
-      meta: [
-        {
-          name: "theme-color",
-          content: "#09110f",
-        },
-      ],
-    },
   },
   supabase: {
     redirect: false,
@@ -19,12 +11,16 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: false },
 
+  ui: {
+    disableGlobalStyles: false,
+    global: true,
+  },
   modules: [
-    "@nuxt/ui",
     "@nuxtjs/supabase",
     "@nuxtjs/device",
     "@nuxt/image",
     "@nuxtjs/google-fonts",
+    "@nuxt/ui",
   ],
 
   // ui: {
@@ -36,9 +32,9 @@ export default defineNuxtConfig({
   // },
   // extends: ["@nuxt/ui-pro"],
 
-  tailwindcss: {
-    configPath: "tailwind.config.js",
-  },
+  // tailwindcss: {
+  //   configPath: "tailwind.config.js",
+  // },
   plugins: [{ src: "~/plugins/supabasewrapper.ts" }],
   // vite: {
   //   build: {
@@ -55,19 +51,27 @@ export default defineNuxtConfig({
   //     routes: ["/"],
   //   },
   // },
+
+  nitro: {
+    compressPublicAssets: { brotli: true, gzip: true },
+    minify: true,
+    prerender: {
+      routes: ["/"],
+    },
+  },
   sourcemap: false,
   srcDir: "./",
-  // experimental: {
-  //   asyncEntry: true,
-  //   crossOriginPrefetch: true,
-  //   writeEarlyHints: true,
-  // },
-  // postcss: {
-  //   plugins: {
-  //     tailwindcss: {},
-  //     autoprefixer: {},
-  //   },
-  // },
+  experimental: {
+    asyncEntry: true,
+    crossOriginPrefetch: true,
+    writeEarlyHints: true,
+  },
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
   googleFonts: {
     families: {
       Nunito: [300, 700, 900],

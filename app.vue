@@ -18,6 +18,11 @@
 <script setup>
 // const route = useRoute();
 
+useSeoMeta({
+  title: "Snapbacks by Snapy",
+  description: "Snapbacks by Snapy",
+});
+
 const links = [
   [
     // {

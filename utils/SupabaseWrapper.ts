@@ -72,7 +72,7 @@ export class SupabaseWrapper {
     columns: string = "*",
     isSingle = false
   ): PostgrestFilterBuilder<any, any, T, string, unknown> {
-    let query = this.client.from(tableName).select(columns);
+    let query = this.client.from(tableName).select(columns, { count: "exact" });
     if (isSingle) {
       //@ts-ignore
       return query.single();

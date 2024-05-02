@@ -5,8 +5,18 @@ export const DomainColumns = [
     sortable: true,
   },
   {
+    key: "days_until_release",
+    label: "Dagar till släpp",
+    sortable: true,
+  },
+  {
     key: "release_at",
     label: "Release",
+    sortable: true,
+  },
+  {
+    key: "year_created",
+    label: "Skapad",
     sortable: true,
   },
   // {

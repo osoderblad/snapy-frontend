@@ -17,6 +17,11 @@
 //   domain_id: bigint;  // ForeignKey referens till BardateDomainsInfo
 // };
 
+export type BardateDomainsResult = {
+  data: CombinedDomainInfo[];
+  count: number;
+};
+
 export type CombinedDomainInfo = {
   id: bigint;
   name: string;

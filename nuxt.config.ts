@@ -34,7 +34,7 @@ export default defineNuxtConfig({
   //     }
   //   }
   // },
-  extends: ["@nuxt/ui-pro"],
+  // extends: ["@nuxt/ui-pro"],
 
   tailwindcss: {
     configPath: "tailwind.config.js",

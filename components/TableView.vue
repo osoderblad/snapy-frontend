@@ -1,13 +1,18 @@
 <template>
   <div>
     <span>Visar: {{ count }} av {{ fullCount }}</span>
+    <span class="opacity-10 mx-2 text-sm">i vy: {{ domains.length }}</span>
 
-    <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex px-3 py-3.5 pl-0">
       <UInput v-model="q" placeholder="Filtrera domäner..." />
     </div>
 
-    <div class="block overflow-y-scroll" ref="el">
+    <div
+      class="block bg-gray-300 bg-opacity-10 dark:bg-slate-50 dark:bg-opacity-5 rounded-lg shadow-md"
+    >
       <UTable
+        ref="el"
+        class="h-[60svh] md:h-[75vh] overflow-y-scroll"
         :loading="isBusy"
         :sort="sort"
         sort-asc-icon="i-heroicons-arrow-up-20-solid"
@@ -23,9 +28,17 @@
         :rows="domains"
         :columns="columns"
       >
+        <template #booked-data="{ row }">
+          <!-- {{ row.booked }} -->
+
+          <a
+            class="text-xs font-semibold px-2 py-1 rounded-full text-indigo-200"
+            >Boka</a
+          >
+        </template>
       </UTable>
     </div>
-    {{ bottom }}
+
     <div class="flex justify-center py-10" v-if="!isBusy">
       <span v-if="isBusy" class="loading loading-spinner opacity-50"></span>
     </div>
@@ -39,9 +52,9 @@ import { useScroll } from "@vueuse/core";
 import { watchDebounced } from "@vueuse/core";
 
 const el = ref(null);
-
+const getCount = 30;
 const from = ref(0) as Ref<number>;
-const to = ref(20) as Ref<number>;
+const to = ref(getCount) as Ref<number>;
 const domains = ref([] as CombinedDomainInfo[]);
 const isBusy = ref(false);
 const columns = DomainColumns;
@@ -69,7 +82,7 @@ watch(bottom, async (newValue) => {
     console.log("Fetching more data...");
 
     const nextFrom = to.value;
-    const nextTo = nextFrom + 10;
+    const nextTo = nextFrom + getCount;
 
     isBusy.value = true;
     var res = await getAllDomains(nextFrom, nextTo, q.value.trim());
@@ -93,9 +106,9 @@ watchDebounced(
   q,
   async (newValue) => {
     newValue = newValue.trim().toLowerCase();
-    if (newValue !== "") {
+    if (newValue) {
       from.value = 0;
-      to.value = 10;
+      to.value = getCount;
       noMoreData.value = false; // Se till att återställa detta också
     }
 
@@ -108,10 +121,11 @@ watchDebounced(
 );
 
 onMounted(async () => {
+  isBusy.value = true;
   var counta = await GetCount();
   fullCount.value = counta;
 
-  const res = await getAllDomains(from.value, to.value, q.value.trim());
+  const res = await getAllDomains(from.value, to.value);
   domains.value = res.data;
   count.value = res.count;
   isBusy.value = false;

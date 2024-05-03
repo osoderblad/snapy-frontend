@@ -6,12 +6,12 @@ export const DomainColumns = [
   },
   {
     key: "days_until_release",
-    label: "Dagar till släpp",
+    label: "Släpps om",
     sortable: true,
   },
   {
     key: "release_at",
-    label: "Release",
+    label: "Släpps",
     sortable: true,
   },
   {
@@ -41,9 +41,15 @@ export const DomainColumns = [
   // },
   {
     key: "url_length",
-    label: "URL-längd",
+    label: "Längd",
     sortable: true,
   },
+
+  {
+    key: "booked",
+    label: "",
+  },
+
   // {
   //   key: "available",
   //   label: "Tillgänglig",

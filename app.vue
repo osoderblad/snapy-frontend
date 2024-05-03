@@ -1,15 +1,17 @@
 <template>
-  <div class="">
+  <div>
+    <!-- max-w-[55px] -->
     <Header />
-    <div
-      class="py-2 container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-8"
-    >
-      <aside class="lg:col-span-2">
-        <UVerticalNavigation class="px-2" :links="links" />
+    <div class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5">
+      <aside
+        class="lg:col-span-2 2xl:col-span-1 dark:bg-[#1C2330] dark:bg-opacity-20 sidenav"
+        v-if="sideNavOpen"
+      >
+        <UVerticalNavigation class="px-2 lg:my-2 my-4" :links="links" />
       </aside>
-      <div class="lg:col-span-8">
+      <div class="lg:col-span-8 2xl:col-span-9">
         <NuxtLoadingIndicator :height="4" :throttle="400" />
-        <NuxtPage />
+        <NuxtPage keepalive />
       </div>
     </div>
   </div>
@@ -17,6 +19,8 @@
 
 <script setup>
 // const route = useRoute();
+
+const sideNavOpen = useState("sideNavOpen", () => true);
 
 useSeoMeta({
   title: "Snapbacks by Snapy",
@@ -50,3 +54,12 @@ const links = [
   ],
 ];
 </script>
+
+<style>
+.sidenav a {
+  color: #818181;
+  padding: 10px;
+  text-decoration: none;
+  font-size: 16px;
+}
+</style>

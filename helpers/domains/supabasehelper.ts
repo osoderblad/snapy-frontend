@@ -45,6 +45,34 @@ export async function GetCount() {
 // }
 
 // Inkluderar sortColumn och sortDirection i funktionsparametrarna
+// export async function getAllDomains(
+//   from: number,
+//   to: number,
+//   searchQuery?: string,
+//   sortColumn?: string,
+//   sortDirection: "asc" | "desc" = "asc"
+// ) {
+//   const supabaseWrapper = useSupabaseWrapper();
+//   let query = supabaseWrapper.select<CombinedDomainInfo[]>(
+//     "combined_domains_view",
+//     "*"
+//   );
+
+//   // Sökfilter
+//   if (searchQuery && searchQuery.length > 0) {
+//     query.ilike("name", `%${searchQuery}%`);
+//   }
+
+//   // Lägg till sortering om angivet
+//   if (sortColumn) {
+//     query.order(sortColumn, { ascending: sortDirection === "asc" });
+//   }
+
+//   const { data, count } = await query.range(from, to);
+
+//   return { data, count } as BardateDomainsResult;
+// }
+
 export async function getAllDomains(
   from: number,
   to: number,
@@ -52,23 +80,26 @@ export async function getAllDomains(
   sortColumn?: string,
   sortDirection: "asc" | "desc" = "asc"
 ) {
-  const supabaseWrapper = useSupabaseWrapper();
-  let query = supabaseWrapper.select<CombinedDomainInfo[]>(
-    "combined_domains_view",
-    "*"
-  );
+  const supabase = useSupabaseClient();
+  let query = supabase
+    .from("combined_domains_view")
+    .select("*", { count: "exact" }) // `count: 'exact'` för att få totala antalet poster
+    .range(from, to);
 
-  // Sökfilter
-  if (searchQuery && searchQuery.length > 0) {
-    query.ilike("name", `%${searchQuery}%`);
+  if (searchQuery) {
+    query = query.ilike("name", `%${searchQuery}%`);
   }
 
-  // Lägg till sortering om angivet
-  if (sortColumn) {
-    query.order(sortColumn, { ascending: sortDirection === "asc" });
+  if (sortColumn && sortDirection) {
+    query = query.order(sortColumn, { ascending: sortDirection === "asc" });
   }
 
-  const { data, count } = await query.range(from, to);
+  const { data, error, count } = await query;
 
-  return { data, count } as BardateDomainsResult;
+  if (error) {
+    console.error("Error fetching domains:", error.message);
+    return { data: [], count: 0 };
+  }
+
+  return { data, count };
 }

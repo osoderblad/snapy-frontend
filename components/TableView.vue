@@ -50,7 +50,6 @@
           @click="loadMore"
           >Ladda fler</span
         >
-
         <span v-if="domains.length == 0">Empty table</span>
       </div>
     </div>
@@ -68,7 +67,7 @@ import { watchDebounced } from "@vueuse/core";
 const columns = DomainColumns;
 const isBusy = ref(false);
 const el = ref(null);
-const getCount = 30;
+const pageSize = 30;
 const domains = ref([] as CombinedDomainInfo[]);
 const q = ref("");
 const count = ref(0);
@@ -85,17 +84,16 @@ const isLastPage = computed(() => {
   return currentPage.value >= maxPage;
 });
 
-const pageSize = 30;
-
 async function updatePage(page) {
   currentPage.value = page;
   const from = (currentPage.value - 1) * pageSize;
   const to = currentPage.value * pageSize - 1;
+  // console.log("updatePage", from, to, q.value.trim());
   await getDomains(from, to, q.value.trim());
 }
 
 function calculateCurrentPage(totalItems, currentIndex) {
-  const itemsPerPage = 30;
+  const itemsPerPage = pageSize;
   return Math.ceil((currentIndex + 1) / itemsPerPage);
 }
 
@@ -103,31 +101,62 @@ onMounted(async () => {
   isBusy.value = true;
   totalItems.value = await GetCount();
 
-  await getDomains(0, 30, q.value.trim());
+  await getDomains(0, pageSize, q.value.trim());
 
   isBusy.value = false;
 });
 
+// async function getDomains(from, to, q) {
+//   var res = await getAllDomains(
+//     from,
+//     to,
+//     q.trim(),
+//     sortColumn.value,
+//     sortDirection.value
+//   );
+//   count.value = res.count;
+
+//   if (currentPage.value === 1) {
+//     domains.value = res.data;
+//   } else {
+//     domains.value.push(...res.data);
+//   }
+// }
+
 async function getDomains(from, to, q) {
-  var res = await getAllDomains(
+  isBusy.value = true;
+  const res = await getAllDomains(
     from,
     to,
-    q.trim(),
+    q,
     sortColumn.value,
     sortDirection.value
   );
-  count.value = res.count;
+  isBusy.value = false;
 
   if (currentPage.value === 1) {
     domains.value = res.data;
   } else {
     domains.value.push(...res.data);
   }
+  count.value = res.count;
 }
 
-watch([q, sortColumn, sortDirection], async () => {
-  updatePage(1);
-});
+watchDebounced(
+  [q, sortColumn, sortDirection],
+  () => {
+    updatePage(1);
+  },
+  { debounce: 300, maxWait: 1000 }
+);
+
+// watchDebounced(
+//   [q, sortColumn, sortDirection],
+//   async () => {
+//     updatePage(1);
+//   },
+//   1500
+// );
 
 const behavior = computed(() => "smooth");
 const { x, y, isScrolling, arrivedState, directions } = useScroll(el, {
@@ -136,7 +165,9 @@ const { x, y, isScrolling, arrivedState, directions } = useScroll(el, {
 const { left, right, top, bottom } = toRefs(arrivedState);
 
 function loadMore() {
-  updatePage(currentPage.value + 1);
+  if (!isLastPage.value && domains.value.length < totalItems.value) {
+    updatePage(currentPage.value + 1);
+  }
 }
 
 watch(bottom, async (newValue) => {

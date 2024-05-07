@@ -1,6 +1,7 @@
 <template>
   <div>
     <span>Visar: {{ count }} av {{ totalItems }}</span>
+
     <span class="opacity-10 mx-2 text-sm">i vy: {{ domains.length }}</span>
     <div class="flex px-3 py-3.5 pl-0">
       <input
@@ -12,7 +13,11 @@
     <div
       class="block bg-gray-300 bg-opacity-10 dark:bg-slate-50 dark:bg-opacity-5 rounded-lg shadow-md"
     >
-      <div class="overflow-x-scroll h-[65vh]" ref="el">
+      <div class="overflow-x-scroll h-[65vh] relative" ref="el">
+        <span
+          v-if="isBusy"
+          class="loading loading-spinner absolute left-2 top-2 z-[100] bg-fuchsia-500"
+        ></span>
         <table class="table" v-show="domains.length > 0">
           <thead>
             <tr>
@@ -89,10 +94,12 @@ const isLastPage = computed(() => {
 });
 
 async function updatePage(page) {
+  isBusy.value = true;
   currentPage.value = page;
   const from = (currentPage.value - 1) * pageSize;
   const to = currentPage.value * pageSize - 1;
   await getDomains(from, to, q.value.trim());
+  isBusy.value = false;
 }
 
 function calculateCurrentPage(totalItems, currentIndex) {
@@ -101,12 +108,8 @@ function calculateCurrentPage(totalItems, currentIndex) {
 }
 
 onMounted(async () => {
-  isBusy.value = true;
   totalItems.value = await GetCount();
-
-  await getDomains(0, pageSize, q.value.trim());
-
-  isBusy.value = false;
+  await updatePage(1);
 });
 
 async function getDomains(from, to, q) {

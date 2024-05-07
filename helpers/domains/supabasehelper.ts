@@ -24,10 +24,33 @@ export async function GetCount() {
 }
 
 // Uppdaterad getAllDomains funktion för att inkludera sökning
+// export async function getAllDomains(
+//   from: number,
+//   to: number,
+//   searchQuery?: string
+// ) {
+//   const supabaseWrapper = useSupabaseWrapper();
+//   let query = supabaseWrapper.select<CombinedDomainInfo[]>(
+//     "combined_domains_view",
+//     "*"
+//   );
+
+//   if (searchQuery && searchQuery.length > 0) {
+//     query.ilike("name", `%${searchQuery}%`); // Använder ILIKE för case-insensitive matchning
+//   }
+
+//   const { data, count } = await query.range(from, to);
+
+//   return { data, count } as BardateDomainsResult;
+// }
+
+// Inkluderar sortColumn och sortDirection i funktionsparametrarna
 export async function getAllDomains(
   from: number,
   to: number,
-  searchQuery?: string
+  searchQuery?: string,
+  sortColumn?: string,
+  sortDirection: "asc" | "desc" = "asc"
 ) {
   const supabaseWrapper = useSupabaseWrapper();
   let query = supabaseWrapper.select<CombinedDomainInfo[]>(
@@ -35,8 +58,14 @@ export async function getAllDomains(
     "*"
   );
 
+  // Sökfilter
   if (searchQuery && searchQuery.length > 0) {
-    query.ilike("name", `%${searchQuery}%`); // Använder ILIKE för case-insensitive matchning
+    query.ilike("name", `%${searchQuery}%`);
+  }
+
+  // Lägg till sortering om angivet
+  if (sortColumn) {
+    query.order(sortColumn, { ascending: sortDirection === "asc" });
   }
 
   const { data, count } = await query.range(from, to);

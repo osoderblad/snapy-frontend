@@ -30,13 +30,13 @@
 </template>
 
 <script setup>
-const colorMode = useColorMode();
+// const colorMode = useColorMode();
 
 function toggleColorMode() {
   colorMode.preference = colorMode.preference === "dark" ? "light" : "dark";
 }
 
-console.log(colorMode.preference);
+// console.log(colorMode.preference);
 </script>
 
 <style>

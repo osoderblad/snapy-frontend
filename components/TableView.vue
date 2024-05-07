@@ -75,7 +75,11 @@ const sortColumn = ref("");
 const sortDirection = ref("");
 const currentPage = ref(1);
 const totalItems = ref(0);
-
+const behavior = computed(() => "smooth");
+const { x, y, isScrolling, arrivedState, directions } = useScroll(el, {
+  behavior,
+});
+const { left, right, top, bottom } = toRefs(arrivedState);
 const isLastPage = computed(() => {
   const maxPage = Math.ceil(totalItems.value / pageSize);
   if (count.value < pageSize) {
@@ -88,7 +92,6 @@ async function updatePage(page) {
   currentPage.value = page;
   const from = (currentPage.value - 1) * pageSize;
   const to = currentPage.value * pageSize - 1;
-  // console.log("updatePage", from, to, q.value.trim());
   await getDomains(from, to, q.value.trim());
 }
 
@@ -105,23 +108,6 @@ onMounted(async () => {
 
   isBusy.value = false;
 });
-
-// async function getDomains(from, to, q) {
-//   var res = await getAllDomains(
-//     from,
-//     to,
-//     q.trim(),
-//     sortColumn.value,
-//     sortDirection.value
-//   );
-//   count.value = res.count;
-
-//   if (currentPage.value === 1) {
-//     domains.value = res.data;
-//   } else {
-//     domains.value.push(...res.data);
-//   }
-// }
 
 async function getDomains(from, to, q) {
   isBusy.value = true;
@@ -150,20 +136,6 @@ watchDebounced(
   { debounce: 300, maxWait: 1000 }
 );
 
-// watchDebounced(
-//   [q, sortColumn, sortDirection],
-//   async () => {
-//     updatePage(1);
-//   },
-//   1500
-// );
-
-const behavior = computed(() => "smooth");
-const { x, y, isScrolling, arrivedState, directions } = useScroll(el, {
-  behavior,
-});
-const { left, right, top, bottom } = toRefs(arrivedState);
-
 function loadMore() {
   if (!isLastPage.value && domains.value.length < totalItems.value) {
     updatePage(currentPage.value + 1);
@@ -178,10 +150,8 @@ watch(bottom, async (newValue) => {
 
 const sortBy = (key) => {
   if (sortColumn.value === key) {
-    // Om samma kolumn, ändra riktningen
     sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
   } else {
-    // Ny kolumn, starta med stigande sortering
     sortColumn.value = key;
     sortDirection.value = "asc";
   }

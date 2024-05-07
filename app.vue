@@ -8,8 +8,6 @@
         v-if="sideNavOpen"
       >
         <SideNav class="px-2 lg:my-2 my-4" :links="links" />
-
-        <!-- <UVerticalNavigation class="px-2 lg:my-2 my-4" :links="links" /> -->
       </aside>
       <div class="lg:col-span-8 2xl:col-span-9">
         <NuxtLoadingIndicator :height="4" :throttle="400" />
@@ -30,13 +28,6 @@ useSeoMeta({
 });
 
 const links = [
-  // {
-  //   label: "Profile",
-  //   avatar: {
-  //     src: "https://avatars.githubusercontent.com/u/739984?v=4",
-  //   },
-  //   badge: 100,
-  // },
   {
     label: "Start",
     icon: HomeIcon,

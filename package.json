@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.2.0",
+    "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/supabase": "latest",
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.10.5",

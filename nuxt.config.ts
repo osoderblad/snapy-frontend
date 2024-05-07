@@ -8,7 +8,7 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: ["@nuxtjs/supabase"],
+  modules: ["@nuxtjs/supabase", "@nuxtjs/google-fonts"],
   app: {
     pageTransition: { name: "page", mode: "out-in" },
   },
@@ -18,4 +18,16 @@ export default defineNuxtConfig({
     clientOptions: { db: { schema: "domains" } },
   },
   plugins: [{ src: "~/plugins/supabasewrapper.ts" }],
+  googleFonts: {
+    families: {
+      Nunito: [300, 500, 700],
+    },
+    display: "swap",
+    download: true,
+    prefetch: true,
+    preconnect: true,
+    overwriting: false,
+    preload: true,
+    useStylesheet: true,
+  },
 });

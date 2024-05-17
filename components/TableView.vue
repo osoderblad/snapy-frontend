@@ -38,7 +38,26 @@
               <td v-for="column in columns" :key="column.key">
                 {{ item[column.key] }}
               </td>
+
+              <td>
+                <button class="btn btn-primary btn-sm" @click="toggleModal">
+                  Boka
+                </button>
+
+                <dialog :class="{ 'modal': true, 'modal-open': showModal, 'modal-middle': true }">
+                  <div class="modal-box">
+                    <h3 class="font-bold text-lg">Hello!</h3>
+                    <p class="py-4">Press ESC key or click the button below to close</p>
+                    <div class="modal-action">
+                      <button class="btn btn-primary" @click="toggleModal">
+                        Close modal
+                      </button>
+                    </div>
+                  </div>
+                </dialog>
+              </td>
             </tr>
+
           </tbody>
           <tfoot>
             <tr>
@@ -69,6 +88,12 @@ import { DomainColumns } from "~/helpers/domains/domainhelper";
 import type { CombinedDomainInfo } from "~/types/bardate_domains";
 import { useScroll } from "@vueuse/core";
 import { watchDebounced } from "@vueuse/core";
+
+import { ref, onMounted } from 'vue';
+import dialogPolyfill from 'dialog-polyfill';
+const modalRef = ref(null);
+const showModal = ref(false);
+
 const columns = DomainColumns;
 const isBusy = ref(false);
 const el = ref(null);
@@ -159,4 +184,14 @@ const sortBy = (key) => {
     sortDirection.value = "asc";
   }
 };
+
+
+function toggleModal(): void {
+  showModal.value = !showModal.value;
+}
+
 </script>
+
+<style>
+
+</style>

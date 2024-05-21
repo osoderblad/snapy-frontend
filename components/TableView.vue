@@ -2,6 +2,12 @@
   <div>
     <span>Visar: {{ count }} av {{ totalItems }}</span>
 
+    <Modal
+      :isOpen="modelIsOpen"
+      @close="modelIsOpen = false"
+      :item="selectedItem"
+    ></Modal>
+
     <span class="opacity-10 mx-2 text-sm">i vy: {{ domains.length }}</span>
     <div class="flex px-3 py-3.5 pl-0">
       <input
@@ -38,26 +44,12 @@
               <td v-for="column in columns" :key="column.key">
                 {{ item[column.key] }}
               </td>
-
               <td>
-                <button class="btn btn-primary btn-sm" @click="toggleModal">
+                <button class="btn btn-primary btn-sm" @click="openModal(item)">
                   Boka
                 </button>
-
-                <dialog :class="{ 'modal': true, 'modal-open': showModal, 'modal-middle': true }">
-                  <div class="modal-box">
-                    <h3 class="font-bold text-lg">Hello!</h3>
-                    <p class="py-4">Press ESC key or click the button below to close</p>
-                    <div class="modal-action">
-                      <button class="btn btn-primary" @click="toggleModal">
-                        Close modal
-                      </button>
-                    </div>
-                  </div>
-                </dialog>
               </td>
             </tr>
-
           </tbody>
           <tfoot>
             <tr>
@@ -89,11 +81,9 @@ import type { CombinedDomainInfo } from "~/types/bardate_domains";
 import { useScroll } from "@vueuse/core";
 import { watchDebounced } from "@vueuse/core";
 
-import { ref, onMounted } from 'vue';
-import dialogPolyfill from 'dialog-polyfill';
-const modalRef = ref(null);
-const showModal = ref(false);
-
+import { ref, onMounted } from "vue";
+const modelIsOpen = ref(false);
+const selectedItem = ref<CombinedDomainInfo | null>(null);
 const columns = DomainColumns;
 const isBusy = ref(false);
 const el = ref(null);
@@ -125,6 +115,11 @@ async function updatePage(page) {
   const to = currentPage.value * pageSize - 1;
   await getDomains(from, to, q.value.trim());
   isBusy.value = false;
+}
+
+function openModal(item: any) {
+  selectedItem.value = item;
+  modelIsOpen.value = true;
 }
 
 function calculateCurrentPage(totalItems, currentIndex) {
@@ -185,13 +180,9 @@ const sortBy = (key) => {
   }
 };
 
-
-function toggleModal(): void {
-  showModal.value = !showModal.value;
-}
-
+// function toggleModal(): void {
+//   showModal.value = !showModal.value;
+// }
 </script>
 
-<style>
-
-</style>
+<style></style>

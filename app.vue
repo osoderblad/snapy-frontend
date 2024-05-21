@@ -22,6 +22,13 @@
 import { LinkIcon, HomeIcon, BriefcaseIcon } from "@heroicons/vue/24/solid";
 const sideNavOpen = useState("sideNavOpen", () => true);
 useState("isLoginOpen", () => false);
+
+useHead({
+  htmlAttrs: {
+    "data-theme": "catppuccin",
+  },
+});
+
 useSeoMeta({
   title: "Snapbacks by Snapy",
   description: "Snapbacks by Snapy",

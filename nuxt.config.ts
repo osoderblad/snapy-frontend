@@ -8,6 +8,7 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+
   modules: ["@nuxtjs/supabase", "@nuxtjs/google-fonts"],
   app: {
     pageTransition: { name: "page", mode: "out-in" },
@@ -29,5 +30,9 @@ export default defineNuxtConfig({
     overwriting: false,
     preload: true,
     useStylesheet: true,
+  },
+
+  routeRules: {
+    "/*": { ssr: false },
   },
 });

@@ -2,12 +2,14 @@
   <div>
     <!-- max-w-[55px] -->
     <Header />
-    <div class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5">
-      <aside
-        class="lg:col-span-2 2xl:col-span-1 dark:bg-[#1C2330] dark:bg-opacity-20 sidenav"
-        v-if="sideNavOpen"
-      >
-        <SideNav class="px-2 lg:my-2 my-4" :links="links" />
+    <div
+      class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5 p-2"
+    >
+      <aside class="lg:col-span-2 2xl:col-span-1 sidenav" v-if="sideNavOpen">
+        <SideNav
+          class="px-2 lg:my-2 my-4 dark:bg-[#181825] py-5 rounded-lg"
+          :links="links"
+        />
       </aside>
       <div class="lg:col-span-8 2xl:col-span-9">
         <NuxtLoadingIndicator :height="4" :throttle="400" />

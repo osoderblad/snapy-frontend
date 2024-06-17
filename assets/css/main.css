@@ -2,6 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Gonzaga";
+  src: url("/assets/fonts/Gonzaga/Gonzaga-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gonzaga";
+  src: url("/assets/fonts/Gonzaga/Gonzaga-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gonzaga";
+  src: url("/assets/fonts/Gonzaga/Gonzaga-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gonzaga";
+  src: url("/assets/fonts/Gonzaga/Gonzaga-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+}
+
 :root {
   touch-action: pan-x pan-y;
   --rounded-box: 1rem;
@@ -10,23 +38,23 @@
   --animation-input: 0.2s;
   --tab-radius: 0.5rem;
   --rounded-btn: 0.6rem;
+  --base-700: #1e1e2e;
+  /* --base-800: #1E1E2E; */
 }
 
 html {
   font-weight: 500;
   font-size: 1rem !important;
-  font-family: "Nunito";
-  /* word-wrap: break-word;
-  word-break: break-word; */
+  font-family: "Nunito Sans";
   height: 100%;
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
 
-/* html.dark {
-  background-color: #0b101b;
-} */
+html[data-theme="catppuccin"] {
+  background: var(--base-700) !important;
+}
 
 body {
   margin: 0;
@@ -35,7 +63,8 @@ body {
 }
 
 html.dark {
-  background: linear-gradient(#111827, #0e1420);
+  /* background: linear-gradient(#111827, #0e1420); */
+  /* background-color: #1e1e2e; */
 }
 
 html.light {
@@ -49,6 +78,7 @@ html.light h3,
 html.light h4 {
   background: #fbfbfb;
   color: #4d5156;
+  font-family: "Gonzaga";
 }
 
 .btn {
@@ -112,12 +142,11 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: Nunito, Arial, sans-serif;
-  @apply font-normal;
+  font-family: "Gonzaga";
   margin-bottom: 1rem;
-  letter-spacing: 0.33px;
-  line-height: 1.2;
-  font-weight: 600;
+  /* letter-spacing: 0.33px; */
+  /* line-height: 1.2; */
+  font-weight: 500;
 }
 h1 {
   @apply text-7xl;
@@ -132,23 +161,19 @@ h4 {
   @apply text-2xl;
 }
 
-h1 {
-  letter-spacing: 0.7px;
-}
-
 @media screen and (max-width: 768px) {
   h1 {
     font-size: 2.7rem;
   }
   h2 {
     font-size: 2.1rem;
-    line-height: normal;
-    letter-spacing: normal;
+    /* line-height: normal;
+    letter-spacing: normal; */
   }
   h3 {
     font-size: 1.8rem;
-    line-height: normal;
-    letter-spacing: normal;
+    /* line-height: normal;
+    letter-spacing: normal; */
   }
   h4 {
     font-size: 1.44rem;
@@ -431,7 +456,7 @@ header .links a {
 /* buttons  */
 
 .nunito {
-  font-family: "Nunito";
+  font-family: "Nunito Sans";
 }
 
 /* animation */

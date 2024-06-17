@@ -15,13 +15,12 @@ export default defineNuxtConfig({
   },
   supabase: {
     redirect: false,
-
     clientOptions: { db: { schema: "domains" } },
   },
   plugins: [{ src: "~/plugins/supabasewrapper.ts" }],
   googleFonts: {
     families: {
-      Nunito: [300, 500, 700],
+      "Nunito Sans": [300, 500, 700],
     },
     display: "swap",
     download: true,

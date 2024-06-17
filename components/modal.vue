@@ -27,9 +27,9 @@
             leave-to="opacity-0 scale-95"
           >
             <DialogPanel
-              class="w-full max-w-md transform overflow-hidden rounded-2xl bg-base-100 p-6 text-left align-middle shadow-xl transition-all border-2 border-gray-700 border-opacity-40"
+              class="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#181825] p-6 text-left align-middle shadow-xl transition-all border-2 border-[#6236A7] border-opacity-40"
             >
-              <DialogTitle as="h3" class="text-lg font-medium leading-6"
+              <DialogTitle as="span" class="text-lg font-medium leading-6"
                 >Vill du boka <strong>{{ item.name }}</strong
                 >?
               </DialogTitle>
@@ -39,7 +39,7 @@
                 </p>
               </div>
 
-              <div class="bg-error text-red-200 rounded-lg p-5">
+              <div class="bg-[#E64553] text-red-200 rounded-lg p-5">
                 <h4 class="mb-1 mt-0 text-lg">Tänk på</h4>
                 <ul class="list-disc ml-5 text-sm">
                   <li>Det är bindande att boka en domän</li>
@@ -51,7 +51,7 @@
               <div class="mt-4">
                 <button
                   type="button"
-                  class="inline-flex justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  class="inline-flex justify-center rounded-full border border-transparent text-white bg-[#5F2DA5] px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                   @click="$emit('close')"
                 >
                   Ja, boka nu!

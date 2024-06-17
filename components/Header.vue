@@ -9,12 +9,11 @@
         <a
           href="/"
           class="flex items-end gap-2 no-underline font-bold text-xl text-gray-900 dark:text-white"
-          aria-label="Nuxt UI"
         >
           <h5 class="underline-none mb-0">
-            Snapbacks by
+            <span class="nunito">Snapbacks by</span>
             <span class="absolute -top-[5px] ml-2 text-primary-400 text-3xl">
-              Snapy</span
+              Snapy<span class="text-gray-500">.se</span></span
             >
           </h5>
         </a>

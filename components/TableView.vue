@@ -12,7 +12,7 @@
     <div class="flex px-3 py-3.5 pl-0">
       <input
         v-model="q"
-        class="input bg-primary text-black placeholder-gray-400 dark:bg-slate-800 dark:text-white dark:placeholder-gray-500"
+        class="input bg-primary text-black placeholder-gray-400 dark:bg-[#20697C] dark:text-[#B7FBFF] dark:placeholder-[#B7FBFF]"
         placeholder="Filtrera domäner..."
       />
     </div>
@@ -45,7 +45,10 @@
                 {{ item[column.key] }}
               </td>
               <td>
-                <button class="btn btn-primary btn-sm" @click="openModal(item)">
+                <button
+                  class="btn btn-ghost bg-[#1D2234] btn-sm rounded-full"
+                  @click="openModal(item)"
+                >
                   Boka
                 </button>
               </td>

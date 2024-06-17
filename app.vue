@@ -7,7 +7,7 @@
     >
       <aside class="lg:col-span-2 2xl:col-span-1 sidenav" v-if="sideNavOpen">
         <SideNav
-          class="px-2 lg:my-2 my-4 dark:bg-[#181825] py-5 rounded-lg"
+          class="p-2 lg:my-2 my-4 dark:bg-[#181825] rounded-lg"
           :links="links"
         />
       </aside>

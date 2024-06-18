@@ -2,6 +2,7 @@
   <div>
     <!-- max-w-[55px] -->
     <Header />
+    <Toast />
     <div
       class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5 p-2"
     >
@@ -45,12 +46,12 @@ const links = [
   {
     label: "Domäner",
     icon: LinkIcon,
-    to: "/domaner",
+    to: "/user/domaner",
   },
   {
     label: "Portfolio",
     icon: BriefcaseIcon,
-    to: "/portfolio",
+    to: "/user/portfolio",
   },
 ];
 </script>

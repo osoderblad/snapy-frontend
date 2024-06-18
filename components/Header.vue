@@ -80,11 +80,13 @@
           </button>
         </div>
 
-        <!-- <ColorMode /> -->
-
-        <span @click="openLogin" class="opacity-60">
+        <NuxtLink v-if="!user" to="/login" class="opacity-60 no-underline">
           Logga in / Registrera
           <LockClosedIcon class="w-5 h-5 inline"></LockClosedIcon>
+        </NuxtLink>
+
+        <span v-if="user" @click="client.auth.signOut()" class="opacity-60">
+          Logga ut
         </span>
 
         <a
@@ -117,13 +119,7 @@
 
 <script setup>
 import { LockClosedIcon } from "@heroicons/vue/24/solid";
-const isLoginOpen = useState("isLoginOpen");
-const sideNavOpen = useState("sideNavOpen");
 
-function openLogin() {
-  isLoginOpen.value = true;
-}
-function toggleSideNav() {
-  sideNavOpen.value = !sideNavOpen.value;
-}
+const user = useSupabaseUser();
+const client = useSupabaseClient();
 </script>

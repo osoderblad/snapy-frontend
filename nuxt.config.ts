@@ -9,6 +9,20 @@ export default defineNuxtConfig({
     },
   },
 
+  runtimeConfig: {
+    public: {
+      stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
+      stripeSectretKey: process.env.STRIPE_SECTRET_KEY,
+      // SUPABASE_URL: process.env.SUPABASE_URL,
+      // STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID,
+    },
+    private: {
+      stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
+      stripeSectretKey: process.env.STRIPE_SECTRET_KEY,
+      // STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID,
+    },
+  },
+
   modules: ["@nuxtjs/supabase", "@nuxtjs/google-fonts"],
   app: {
     pageTransition: { name: "page", mode: "out-in" },

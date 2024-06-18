@@ -1,7 +1,9 @@
 // import type { IUser } from "~~/types/IUser";
-import { serverSupabaseUser, serverSupabaseClient } from "#supabase/server";
-import type { IUser } from "~/server/types/IUser";
+// import { serverSupabaseUser, serverSupabaseClient } from "#supabase/server";
 // import type { ISubscription } from "~~/types/ISubscription";
+
+import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
+import type { IUser } from "~/server/types/IUser";
 
 export async function getCurrentUser(event: any): Promise<IUser> {
   const user = await serverSupabaseUser(event);
@@ -57,16 +59,16 @@ export async function getCurrentUser(event: any): Promise<IUser> {
 //   return {} as ISubscription;
 // }
 
-// export async function updateStripeCustomerId(data: IUser, event: any) {
-//   const client = await serverSupabaseClient(event);
+export async function updateStripeCustomerId(data: IUser, event: any) {
+  const client = await serverSupabaseClient(event);
 
-//   const { status } = await client
-//     .from("users")
-//     .update({ stripeCustomerId: data.stripeCustomerId } as never)
-//     .eq("id", data.id as number);
+  const { status } = await client
+    .from("users")
+    .update({ stripeCustomerId: data.stripeCustomerId } as never)
+    .eq("id", data.id as number);
 
-//   return status;
-// }
+  return status;
+}
 
 // export async function createOrUpdateSubscription(
 //   data: ISubscription,

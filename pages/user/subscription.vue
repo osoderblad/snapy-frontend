@@ -38,24 +38,19 @@
         </fieldset>
       </div>
       <div
-        class="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-8 md:max-w-2xl md:grid-cols-2 lg:max-w-4xl xl:mx-0 xl:max-w-none xl:grid-cols-4"
+        class="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-8 md:max-w-2xl md:grid-cols-2 lg:max-w-4xl xl:mx-0 xl:max-w-none xl:grid-cols-3"
       >
         <div
-          v-for="tier in pricing.tiers"
+          v-for="(tier, index) in tiers"
           :key="tier.id"
           :class="[
-            tier.mostPopular
-              ? 'ring-2 ring-indigo-600'
-              : 'ring-1 ring-gray-200',
+            index == 1 ? 'ring-2 ring-indigo-600' : 'ring-1 ring-gray-200',
             'rounded-3xl p-8',
           ]"
         >
           <h2
             :id="tier.id"
-            :class="[
-              tier.mostPopular ? '' : '',
-              'text-lg font-semibold leading-8',
-            ]"
+            :class="[index == 1 ? '' : '', 'text-lg font-semibold leading-8']"
           >
             {{ tier.name }}
           </h2>
@@ -63,23 +58,24 @@
             {{ tier.description }}
           </p>
           <p class="mt-6 flex items-baseline gap-x-1">
-            <span class="text-4xl font-bold tracking-tight">{{
-              tier.price[frequency.value]
-            }}</span>
+            <span class="text-4xl font-bold tracking-tight">
+              <!-- {{ getPrice(tier.id) }} -->
+
+              {{ prices[tier.id] }}
+            </span>
             <span class="text-sm font-semibold leading-6">{{
               frequency.priceSuffix
             }}</span>
           </p>
           <a
-            :href="tier.href"
             :aria-describedby="tier.id"
             :class="[
-              tier.mostPopular
+              index == 1
                 ? 'bg-indigo-600 shadow-sm hover:bg-indigo-500'
                 : ' ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300',
-              'mt-6 block rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
+              'mt-6 block px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-lg',
             ]"
-            >Buy plan</a
+            >Prenumerera</a
           >
           <ul role="list" class="mt-8 space-y-3 text-sm leading-6">
             <li
@@ -114,89 +110,135 @@
   </section>
 </template>
 
-<script setup>
-import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  RadioGroup,
-  RadioGroupOption,
-} from "@headlessui/vue";
-import {
-  Bars3Icon,
-  MinusSmallIcon,
-  PlusSmallIcon,
-  XMarkIcon,
-} from "@heroicons/vue/24/outline";
+<script setup lang="ts">
+import { RadioGroup, RadioGroupOption } from "@headlessui/vue";
 import { CheckIcon } from "@heroicons/vue/20/solid";
+import type Stripe from "stripe";
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 const isSubbed = ref(false);
 
 const pricing = {
   frequencies: [
-    { value: "monthly", label: "Monthly", priceSuffix: "/month" },
-    { value: "annually", label: "Annually", priceSuffix: "/year" },
-  ],
-  tiers: [
-    {
-      name: "Hobby",
-      id: "tier-hobby",
-      href: "#",
-      price: { monthly: "$15", annually: "$144" },
-      description: "The essentials to provide your best work for clients.",
-      features: ["5 products", "Up to 1,000 subscribers", "Basic analytics"],
-      mostPopular: false,
-    },
-    {
-      name: "Freelancer",
-      id: "tier-freelancer",
-      href: "#",
-      price: { monthly: "$30", annually: "$288" },
-      description: "The essentials to provide your best work for clients.",
-      features: [
-        "5 products",
-        "Up to 1,000 subscribers",
-        "Basic analytics",
-        "48-hour support response time",
-      ],
-      mostPopular: false,
-    },
-    {
-      name: "Startup",
-      id: "tier-startup",
-      href: "#",
-      price: { monthly: "$60", annually: "$576" },
-      description: "A plan that scales with your rapidly growing business.",
-      features: [
-        "25 products",
-        "Up to 10,000 subscribers",
-        "Advanced analytics",
-        "24-hour support response time",
-        "Marketing automations",
-      ],
-      mostPopular: true,
-    },
-    {
-      name: "Enterprise",
-      id: "tier-enterprise",
-      href: "#",
-      price: { monthly: "$90", annually: "$864" },
-      description: "Dedicated support and infrastructure for your company.",
-      features: [
-        "Unlimited products",
-        "Unlimited subscribers",
-        "Advanced analytics",
-        "1-hour, dedicated support response time",
-        "Marketing automations",
-        "Custom reporting tools",
-      ],
-      mostPopular: false,
-    },
+    { value: "monthly", label: "Monthly", priceSuffix: "/månad" },
+    { value: "annually", label: "Annually", priceSuffix: "/år" },
   ],
 };
 
+const tiers = ref<Stripe.Product[] | null>(null);
+
+// const products = ref();
+const prices = ref([]);
+
+onMounted(async () => {
+  const res = await getStripeProducts();
+  const pricePromises = res.data.map(async (product) => {
+    const price = await getPrice(product.id);
+    return { id: product.id, price: price }; // Förbered data som ett objekt med id och price
+  });
+
+  const priceResults = await Promise.all(pricePromises);
+  // Omvandla lista av resultat till ett objekt där nyckeln är id och värdet är priset
+  prices.value = priceResults.reduce((acc, current) => {
+    acc[current.id] = current.price; // Tilldela varje pris till rätt ID
+    return acc;
+  }, {});
+
+  tiers.value = res.data; // Direkt tilldelning till tiers
+});
+// onMounted(async () => {
+//   getStripeProducts().then((res) => {
+//     res.data.forEach(async (product) => {
+//       const price = await getPrice(product.id);
+
+//       prices.value.push(
+//         {product.id : price}
+//       );
+//     });
+//     // products.value = res.data;
+//     tiers.value = res.data as Stripe.Product[];
+//   });
+
+//   // prices.value = await getStripePrices();
+//   // console.log(prices.value);
+// });
+
+async function getPrice(prodId: string) {
+  const prices = await getStripePricesByProd(prodId);
+  if (prices.length === 0 && prices[0].unit_amount) return "No price found";
+
+  //@ts-ignore
+  return prices[0].unit_amount / 100;
+}
+
+// function convertApiToTiers(apiResponse: any): Tier[] {
+//   return apiResponse.data.map((product) => {
+//     const tier: Tier = {
+//       name: product.name,
+//       description: product.description,
+//       features: [],
+//       mostPopular: false,
+//       price: {
+//         monthly: "",
+//         annually: "",
+//       },
+
+//       id: product.id,
+//       href: "#", // antar att vi inte har specifik URL och använder en placeholder
+//     };
+
+//     // Dynamiskt hantera tillägg av prisinformation om den finns tillgänglig
+//     if (product.price) {
+//       // Anta att `price` innehåller en sub-objekt med månatlig och årlig prissättning
+//       tier.price = {
+//         monthly: product.price.monthly, // Anta att dessa fält finns
+//         annually: product.price.annually,
+//       };
+//     }
+
+//     // Lägg till en beskrivning om det finns
+//     if (product.description) {
+//       tier.description = product.description;
+//     }
+
+//     // Anta att `features` är en lista med strängar om den finns
+//     if (product.features) {
+//       tier.features = product.features;
+//     }
+
+//     // Hantera 'mostPopular' om det finns en sådan markör
+//     if (product.mostPopular) {
+//       tier.mostPopular = product.mostPopular;
+//     }
+
+//     return tier;
+//   });
+// }
+
 const frequency = ref(pricing.frequencies[0]);
+
+// type Frequency = {
+//   value: string;
+//   label: string;
+//   priceSuffix: string;
+// };
+
+// type Price = {
+//   monthly: string;
+//   annually: string;
+// };
+
+// type Tier = {
+//   name: string;
+//   id: string;
+//   href: string;
+//   price: Price;
+//   description: string;
+//   features: string[];
+//   mostPopular: boolean;
+// };
+// type Pricing = {
+//   frequencies: Frequency[];
+//   tiers: Tier[];
+// };
 </script>

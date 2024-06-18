@@ -17,12 +17,16 @@
         <NuxtPage keepalive />
       </div>
     </div>
-    <AuthLogin></AuthLogin>
   </div>
 </template>
 
 <script setup>
-import { LinkIcon, HomeIcon, BriefcaseIcon } from "@heroicons/vue/24/solid";
+import {
+  LinkIcon,
+  HomeIcon,
+  BriefcaseIcon,
+  CreditCardIcon,
+} from "@heroicons/vue/24/solid";
 const sideNavOpen = useState("sideNavOpen", () => true);
 useState("isLoginOpen", () => false);
 
@@ -52,6 +56,11 @@ const links = [
     label: "Portfolio",
     icon: BriefcaseIcon,
     to: "/user/portfolio",
+  },
+  {
+    label: "Prenumeration",
+    icon: CreditCardIcon,
+    to: "/user/subscription",
   },
 ];
 </script>

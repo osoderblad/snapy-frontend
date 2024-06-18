@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     const session = await stripe.billingPortal.sessions.create({
       customer: stripe_id,
       locale: "sv",
-      return_url: `${config.public.appDomain}user/bought`,
+      return_url: `${config.public.appDomain}/domaner`,
     });
 
     var sessionUrl = session.url;

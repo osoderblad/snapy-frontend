@@ -67,16 +67,26 @@
               frequency.priceSuffix
             }}</span>
           </p>
-          <a
-            :aria-describedby="tier.id"
-            :class="[
-              index == 1
-                ? 'bg-indigo-600 shadow-sm hover:bg-indigo-500'
-                : ' ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300',
-              'mt-6 block px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-lg',
-            ]"
-            >Prenumerera</a
-          >
+
+          <div>
+            <form action="/api/subscribe" method="post" v-if="user">
+              <input type="hidden" name="customer_id" :value="user?.id" />
+              <input type="hidden" name="price_id" :value="tier.id" />
+              <button type="submit" href="#" aria-describedby="tier-hobby">
+                <span
+                  :aria-describedby="tier.id"
+                  :class="[
+                    index == 1
+                      ? 'bg-indigo-600 shadow-sm hover:bg-indigo-500'
+                      : ' ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300',
+                    'mt-6 block px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-lg',
+                  ]"
+                  >Prenumerera</span
+                >
+              </button>
+            </form>
+          </div>
+
           <ul role="list" class="mt-8 space-y-3 text-sm leading-6">
             <li
               v-for="feature in tier.features"
@@ -114,20 +124,18 @@
 import { RadioGroup, RadioGroupOption } from "@headlessui/vue";
 import { CheckIcon } from "@heroicons/vue/20/solid";
 import type Stripe from "stripe";
-const client = useSupabaseClient();
+
 const user = useSupabaseUser();
-const isSubbed = ref(false);
 
 const pricing = {
   frequencies: [
-    { value: "monthly", label: "Monthly", priceSuffix: "/månad" },
-    { value: "annually", label: "Annually", priceSuffix: "/år" },
+    { value: "monthly", label: "Månad", priceSuffix: "/månad" },
+    { value: "annually", label: "År", priceSuffix: "/år" },
   ],
 };
 
 const tiers = ref<Stripe.Product[] | null>(null);
 
-// const products = ref();
 const prices = ref([]);
 
 onMounted(async () => {
@@ -146,22 +154,6 @@ onMounted(async () => {
 
   tiers.value = res.data; // Direkt tilldelning till tiers
 });
-// onMounted(async () => {
-//   getStripeProducts().then((res) => {
-//     res.data.forEach(async (product) => {
-//       const price = await getPrice(product.id);
-
-//       prices.value.push(
-//         {product.id : price}
-//       );
-//     });
-//     // products.value = res.data;
-//     tiers.value = res.data as Stripe.Product[];
-//   });
-
-//   // prices.value = await getStripePrices();
-//   // console.log(prices.value);
-// });
 
 async function getPrice(prodId: string) {
   const prices = await getStripePricesByProd(prodId);
@@ -171,74 +163,5 @@ async function getPrice(prodId: string) {
   return prices[0].unit_amount / 100;
 }
 
-// function convertApiToTiers(apiResponse: any): Tier[] {
-//   return apiResponse.data.map((product) => {
-//     const tier: Tier = {
-//       name: product.name,
-//       description: product.description,
-//       features: [],
-//       mostPopular: false,
-//       price: {
-//         monthly: "",
-//         annually: "",
-//       },
-
-//       id: product.id,
-//       href: "#", // antar att vi inte har specifik URL och använder en placeholder
-//     };
-
-//     // Dynamiskt hantera tillägg av prisinformation om den finns tillgänglig
-//     if (product.price) {
-//       // Anta att `price` innehåller en sub-objekt med månatlig och årlig prissättning
-//       tier.price = {
-//         monthly: product.price.monthly, // Anta att dessa fält finns
-//         annually: product.price.annually,
-//       };
-//     }
-
-//     // Lägg till en beskrivning om det finns
-//     if (product.description) {
-//       tier.description = product.description;
-//     }
-
-//     // Anta att `features` är en lista med strängar om den finns
-//     if (product.features) {
-//       tier.features = product.features;
-//     }
-
-//     // Hantera 'mostPopular' om det finns en sådan markör
-//     if (product.mostPopular) {
-//       tier.mostPopular = product.mostPopular;
-//     }
-
-//     return tier;
-//   });
-// }
-
 const frequency = ref(pricing.frequencies[0]);
-
-// type Frequency = {
-//   value: string;
-//   label: string;
-//   priceSuffix: string;
-// };
-
-// type Price = {
-//   monthly: string;
-//   annually: string;
-// };
-
-// type Tier = {
-//   name: string;
-//   id: string;
-//   href: string;
-//   price: Price;
-//   description: string;
-//   features: string[];
-//   mostPopular: boolean;
-// };
-// type Pricing = {
-//   frequencies: Frequency[];
-//   tiers: Tier[];
-// };
 </script>

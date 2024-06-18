@@ -77,7 +77,7 @@
             <LockClosedIcon class="w-5 h-5 inline"></LockClosedIcon>
           </NuxtLink>
 
-          <span v-if="user" @click="client.auth.signOut()" class="opacity-60">
+          <span v-if="user" @click="logout()" class="opacity-60">
             Logga ut
           </span>
         </div>
@@ -103,4 +103,9 @@ import { LockClosedIcon } from "@heroicons/vue/24/solid";
 
 const user = useSupabaseUser();
 const client = useSupabaseClient();
+
+function logout() {
+  client.auth.signOut();
+  navigateTo("/");
+}
 </script>

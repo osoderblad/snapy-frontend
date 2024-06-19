@@ -12,7 +12,7 @@
         Välj en prisvärd plan som är fullspäckad med de bästa funktionerna för
         engagera din publik, skapa kundlojalitet och driva försäljning.
       </p>
-      <div class="mt-16 flex justify-center">
+      <!-- <div class="mt-16 flex justify-center">
         <fieldset aria-label="Payment frequency">
           <RadioGroup
             v-model="frequency"
@@ -36,7 +36,7 @@
             </RadioGroupOption>
           </RadioGroup>
         </fieldset>
-      </div>
+      </div> -->
       <div
         class="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-8 md:max-w-2xl md:grid-cols-2 lg:max-w-4xl xl:mx-0 xl:max-w-none xl:grid-cols-3"
       >
@@ -59,21 +59,15 @@
           </p>
           <p class="mt-6 flex items-baseline gap-x-1">
             <span class="text-4xl font-bold tracking-tight">
-              {{ prices[tier.id].price }}
+              {{ tier.amount }}
             </span>
-            <span class="text-sm font-semibold leading-6">{{
-              frequency.priceSuffix
-            }}</span>
+            <span class="text-sm font-semibold leading-6">{{ "sek" }}</span>
           </p>
 
           <div>
             <form action="/api/subscribe" method="post" v-if="user">
               <input type="hidden" name="customer_id" :value="user?.id" />
-              <input
-                type="hidden"
-                name="price_id"
-                :value="prices[tier.id].priceId"
-              />
+              <input type="hidden" name="price_id" :value="tier.id" />
               <button type="submit" href="#" aria-describedby="tier-hobby">
                 <span
                   :aria-describedby="tier.id"
@@ -123,52 +117,70 @@
 </template>
 
 <script setup lang="ts">
-import { RadioGroup, RadioGroupOption } from "@headlessui/vue";
 import { CheckIcon } from "@heroicons/vue/20/solid";
-import type Stripe from "stripe";
-
 const user = useSupabaseUser();
-
-const pricing = {
-  frequencies: [
-    { value: "monthly", label: "Månad", priceSuffix: "/månad" },
-    { value: "annually", label: "År", priceSuffix: "/år" },
-  ],
+const tiers = ref<Tier[]>([
+  {
+    id: "price_1PT8ZI2Mj8slfhWsDoMeO7AX",
+    name: "Basic",
+    description: "En bra start för att komma igång",
+    features: ["Funktion 1", "Funktion 2", "Funktion 3"],
+    amount: 0,
+  },
+  {
+    id: "price_1PT8Z82Mj8slfhWsAwU4Eu5W",
+    name: "Standard",
+    description: "För dig som vill ha lite mer",
+    features: ["Funktion 1", "Funktion 2", "Funktion 3"],
+    amount: 200,
+  },
+  {
+    id: "price_1PT8Yv2Mj8slfhWsr7TgCl7Q",
+    name: "Premium",
+    description: "För dig som vill ha allt",
+    features: ["Funktion 1", "Funktion 2", "Funktion 3"],
+    amount: 300,
+  },
+]);
+type Tier = {
+  id: string;
+  name: string;
+  description: string;
+  features: string[];
+  amount: number;
 };
-
-const tiers = ref<Stripe.Product[] | null>(null);
 
 const prices = ref([]);
 
 onMounted(async () => {
-  const res = await getStripeProducts();
-  const pricePromises = res.data.map(async (product) => {
-    const price = (await getPrice(product.id)) as Stripe.Price;
-
-    if (price?.unit_amount == null) return;
-
-    const unit_amount = price.unit_amount / 100;
-
-    return { id: product.id, price: unit_amount, priceId: price.id }; // Förbered data som ett objekt med id och price
-  });
-
-  const priceResults = await Promise.all(pricePromises);
-  // Omvandla lista av resultat till ett objekt där nyckeln är id och värdet är priset
-  prices.value = priceResults.reduce((acc, current) => {
-    acc[current.id] = { price: current?.price, priceId: current?.priceId }; // Tilldela varje pris till rätt ID
-    return acc;
-  }, {});
-
-  tiers.value = res.data; // Direkt tilldelning till tiers
+  // const res = await getStripeProducts();
+  // const pricePromises = res.data.map(async (product) => {
+  //   const price = (await getPrice(product.id)) as Stripe.Price;
+  //   if (price?.unit_amount == null) return;
+  //   const unit_amount = price.unit_amount / 100;
+  //   return { id: product.id, price: unit_amount, priceId: price.id }; // Förbered data som ett objekt med id och price
+  // });
+  // const priceResults = await Promise.all(pricePromises);
+  // // Omvandla lista av resultat till ett objekt där nyckeln är id och värdet är priset
+  // prices.value = priceResults.reduce((acc, current) => {
+  //   acc[current.id] = { price: current?.price, priceId: current?.priceId }; // Tilldela varje pris till rätt ID
+  //   return acc;
+  // }, {});
+  // tiers.value = res.data; // Direkt tilldelning till tiers
 });
+// const pricing = {
+//   frequencies: [
+//     { value: "monthly", label: "Månad", priceSuffix: "/månad" },
+//     { value: "annually", label: "År", priceSuffix: "/år" },
+//   ],
+// };
+// async function getPrice(prodId: string) {
+//   const prices = await getStripePricesByProd(prodId);
+//   if (prices.length === 0 && prices[0].unit_amount) return null;
 
-async function getPrice(prodId: string) {
-  const prices = await getStripePricesByProd(prodId);
-  if (prices.length === 0 && prices[0].unit_amount) return null;
+//   //@ts-ignore
+//   return prices[0];
+// }
 
-  //@ts-ignore
-  return prices[0];
-}
-
-const frequency = ref(pricing.frequencies[0]);
+// const frequency = ref(pricing.frequencies[0]);
 </script>

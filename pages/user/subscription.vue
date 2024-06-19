@@ -61,7 +61,7 @@
             <span class="text-4xl font-bold tracking-tight">
               {{ tier.amount }}
             </span>
-            <span class="text-sm font-semibold leading-6">{{ "sek" }}</span>
+            <span class="text-sm font-semibold leading-6">sek/mån</span>
           </p>
 
           <div>
@@ -124,21 +124,41 @@ const tiers = ref<Tier[]>([
     id: "price_1PT8ZI2Mj8slfhWsDoMeO7AX",
     name: "Basic",
     description: "En bra start för att komma igång",
-    features: ["Funktion 1", "Funktion 2", "Funktion 3"],
+    features: ["Domän hantering", "NS/DNS för egen domän", "15 antal dagar"],
+
     amount: 0,
   },
   {
     id: "price_1PT8Z82Mj8slfhWsAwU4Eu5W",
     name: "Standard",
     description: "För dig som vill ha lite mer",
-    features: ["Funktion 1", "Funktion 2", "Funktion 3"],
+    features: [
+      "Domän hantering",
+      "NS/DNS för egen domän",
+      "25 antal dagar",
+      "Snapback",
+      "Finns på Google",
+      "Wayback Machine",
+    ],
     amount: 200,
   },
   {
     id: "price_1PT8Yv2Mj8slfhWsr7TgCl7Q",
     name: "Premium",
     description: "För dig som vill ha allt",
-    features: ["Funktion 1", "Funktion 2", "Funktion 3"],
+    features: [
+      "Domän hantering",
+      "NS/DNS för egen domän",
+      "30 antal dagar",
+      "Snapback",
+      "Finns på Google",
+      "Wayback Machine",
+      "DNS historik",
+      "Ahref Data / Stats",
+      "Moz Data?",
+      "Whois historik",
+      "Se potentiella utgående domäner",
+    ],
     amount: 300,
   },
 ]);

@@ -6,13 +6,13 @@
     <div
       class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5 p-2"
     >
-      <aside class="lg:col-span-2 2xl:col-span-1 sidenav" v-if="sideNavOpen">
+      <aside class="lg:col-span-2 sidenav" v-if="sideNavOpen">
         <SideNav
           class="p-2 lg:my-2 my-4 dark:bg-[#181825] rounded-lg"
           :links="links"
         />
       </aside>
-      <div class="lg:col-span-8 2xl:col-span-9">
+      <div class="lg:col-span-8">
         <NuxtLoadingIndicator :height="4" :throttle="400" />
         <NuxtPage keepalive />
       </div>

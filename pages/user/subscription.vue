@@ -59,9 +59,7 @@
           </p>
           <p class="mt-6 flex items-baseline gap-x-1">
             <span class="text-4xl font-bold tracking-tight">
-              <!-- {{ getPrice(tier.id) }} -->
-
-              {{ prices[tier.id] }}
+              {{ prices[tier.id].price }}
             </span>
             <span class="text-sm font-semibold leading-6">{{
               frequency.priceSuffix
@@ -71,7 +69,11 @@
           <div>
             <form action="/api/subscribe" method="post" v-if="user">
               <input type="hidden" name="customer_id" :value="user?.id" />
-              <input type="hidden" name="price_id" :value="tier.id" />
+              <input
+                type="hidden"
+                name="price_id"
+                :value="prices[tier.id].priceId"
+              />
               <button type="submit" href="#" aria-describedby="tier-hobby">
                 <span
                   :aria-describedby="tier.id"
@@ -141,14 +143,19 @@ const prices = ref([]);
 onMounted(async () => {
   const res = await getStripeProducts();
   const pricePromises = res.data.map(async (product) => {
-    const price = await getPrice(product.id);
-    return { id: product.id, price: price }; // Förbered data som ett objekt med id och price
+    const price = (await getPrice(product.id)) as Stripe.Price;
+
+    if (price?.unit_amount == null) return;
+
+    const unit_amount = price.unit_amount / 100;
+
+    return { id: product.id, price: unit_amount, priceId: price.id }; // Förbered data som ett objekt med id och price
   });
 
   const priceResults = await Promise.all(pricePromises);
   // Omvandla lista av resultat till ett objekt där nyckeln är id och värdet är priset
   prices.value = priceResults.reduce((acc, current) => {
-    acc[current.id] = current.price; // Tilldela varje pris till rätt ID
+    acc[current.id] = { price: current?.price, priceId: current?.priceId }; // Tilldela varje pris till rätt ID
     return acc;
   }, {});
 
@@ -157,10 +164,10 @@ onMounted(async () => {
 
 async function getPrice(prodId: string) {
   const prices = await getStripePricesByProd(prodId);
-  if (prices.length === 0 && prices[0].unit_amount) return "No price found";
+  if (prices.length === 0 && prices[0].unit_amount) return null;
 
   //@ts-ignore
-  return prices[0].unit_amount / 100;
+  return prices[0];
 }
 
 const frequency = ref(pricing.frequencies[0]);

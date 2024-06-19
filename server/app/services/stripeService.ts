@@ -41,8 +41,8 @@ export async function getSubscribeUrl(
 
     mode: "subscription",
     automatic_tax: { enabled: true },
-    success_url: `${config.public.appDomain}user/bought`,
-    cancel_url: `${config.public.appDomain}user/bought`,
+    success_url: `${config.public.appDomain}user`,
+    cancel_url: `${config.public.appDomain}user`,
     customer: user.stripeCustomerId,
     customer_update: { shipping: "auto" },
     shipping_address_collection: {

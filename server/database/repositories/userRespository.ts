@@ -10,7 +10,9 @@ export async function getCurrentUser(event: any): Promise<IUser> {
   const client = await serverSupabaseClient(event);
 
   const { data, error } = await client
-    .from("users")
+    //@ts-ignore
+    .schema("public")
+    .from("user_profiles")
     .select()
     .eq("id", user?.id as string)
     .single();

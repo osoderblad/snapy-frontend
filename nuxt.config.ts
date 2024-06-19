@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     public: {
       stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
       stripeSectretKey: process.env.STRIPE_SECTRET_KEY,
+      appDomain: process.env.APP_DOMAIN,
       // SUPABASE_URL: process.env.SUPABASE_URL,
       // STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID,
     },

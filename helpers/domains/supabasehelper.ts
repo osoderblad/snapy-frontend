@@ -1,8 +1,6 @@
-import type {
-  BardateDomainsResult,
-  CombinedDomainInfo,
-} from "~/types/bardate_domains";
+import type Stripe from "stripe";
 import { useSupabaseWrapper } from "../../utils/SupabaseWrapper";
+import type { IUser } from "~/server/types/IUser";
 
 // export async function getAllDomains(from: number, to: number) {
 //   const supabaseWrapper = useSupabaseWrapper();
@@ -12,6 +10,24 @@ import { useSupabaseWrapper } from "../../utils/SupabaseWrapper";
 //     .range(from, to);
 //   return data as CombinedDomainInfo[];
 // }
+
+export async function getCurrentUser(): Promise<IUser> {
+  const user = await useSupabaseUser();
+  const client = await useSupabaseClient();
+
+  const { data, error } = await client
+    //@ts-ignore
+    .schema("public")
+    .from("user_profiles")
+    .select()
+    .eq("id", user?.value?.id as string)
+    .single();
+
+  if (error) {
+    throw createError({ statusMessage: error.message });
+  }
+  return data;
+}
 
 export async function GetCount() {
   const supabaseWrapper = useSupabaseWrapper();
@@ -102,4 +118,56 @@ export async function getAllDomains(
   }
 
   return { data, count };
+}
+
+export type SubscriptionDetails = {
+  id: string;
+  // product: string;
+  name?: string;
+
+  status: string;
+  current_period_end: string | number;
+  cancel_at_period_end: boolean;
+  cancel_at: string | number;
+  created: string | number;
+
+  alternativeName: string;
+
+  plan?: SubscriptionDetailsPlan;
+};
+
+export type SubscriptionDetailsPlan = {
+  active: boolean;
+  amount: number | null;
+  interval: string; // day, week, month, year
+  product: string | null;
+};
+
+// Funktion för att mappa Stripe-subscription till SubscriptionDetails
+export function mapStripeSubscriptionToSubscriptionDetails(
+  subscription: Stripe.Subscription
+): SubscriptionDetails {
+  console.log("subscription", subscription);
+
+  const plan = subscription.items.data[0]?.plan as Stripe.Plan;
+
+  return {
+    id: subscription.id,
+
+    plan: {
+      active: plan.active,
+      product: plan.product as string,
+      amount: plan.amount,
+      interval: plan.interval,
+    },
+
+    status: subscription.status,
+    current_period_end: subscription.current_period_end,
+    cancel_at_period_end: subscription.cancel_at_period_end
+      ? subscription.cancel_at_period_end
+      : false,
+    cancel_at: subscription.cancel_at ? subscription.cancel_at : "",
+    created: subscription.created,
+    alternativeName: "",
+  };
 }

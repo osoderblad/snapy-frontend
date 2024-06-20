@@ -1,119 +1,202 @@
 <template>
-  <div>
+  <div class="text-sm max-w-md">
     <div id="prenumeration">
-      <h4 class="pt-6 pb-2" id="Prenumeration">Prenumeration</h4>
-      <div v-if="subscription" class="">
-        <h3>{{ subscription.name }}</h3>
+      <div class="text-center my-2">
+        <h3>{{ sub.name }}</h3>
         <span class="text-lg">
-          {{ subscription.plan?.amount && subscription.plan?.amount / 100 }}
+          {{ sub.plan?.amount && sub.plan?.amount / 100 }}
           <span class="font-bold">
-            kr/{{ subscription.plan?.interval === "month" ? "mån" : "år" }}
+            kr/{{ sub.plan?.interval === "month" ? "månad" : "år" }}
           </span>
         </span>
-        <div>
-          <div :key="index" class="pb-1">
-            <span
-              class="bg-yellow-500 bg-opacity-20 text-yellow-900 font-extrabold text-sm py-1 px-4 rounded-lg flex items-center justify-center w-fit m-auto"
-              v-if="subscription.status == 'trialing'"
-            >
-              <span class="mr-2">
-                <svg
-                  aria-hidden="true"
-                  class="fill-yellow-600"
-                  height="12"
-                  width="12"
-                  viewBox="0 0 16 16"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm1-8.577V4a1 1 0 1 0-2 0v4a1 1 0 0 0 .517.876l2.581 1.49a1 1 0 0 0 1-1.732z"
-                    fill-rule="evenodd"
-                  ></path>
-                </svg>
-              </span>
-              <span>
-                Din Provperiod löper ut
-                <span class="font-bold">
-                  den
-                  {{
-                    convertUnixTimestampToSweDateAndMonth(
-                      subscription.current_period_end
-                    )
-                  }}
+      </div>
+
+      <Disclosure v-slot="{ open }">
+        <DisclosureButton
+          class="w-full btn btn-ghost bg-gray-50 bg-opacity-5"
+          :style="subClasses()"
+        >
+          <span class="font-bold text-md"> Hantera prenumeration </span>
+          <ChevronUpIcon
+            :class="open ? 'rotate-180 transform' : ''"
+            class="h-8 w-8 text-gray-400"
+          />
+        </DisclosureButton>
+        <transition
+          name="expand"
+          @before-enter="beforeEnterMaxHeight"
+          @enter="enterMaxHeight"
+          @leave="leaveMaxHeight"
+        >
+          <DisclosurePanel class="text-sm">
+            <div class="p-2 py-4 pl-5 text-center">
+              <span
+                class="bg-yellow-500 bg-opacity-20 text-white font-extrabold text-sm py-1 px-4 rounded-lg flex items-center justify-center w-fit m-auto"
+                v-if="isTrialing()"
+              >
+                <span class="mr-2">
+                  <svg
+                    aria-hidden="true"
+                    class="fill-yellow-600"
+                    height="12"
+                    width="12"
+                    viewBox="0 0 16 16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm1-8.577V4a1 1 0 1 0-2 0v4a1 1 0 0 0 .517.876l2.581 1.49a1 1 0 0 0 1-1.732z"
+                      fill-rule="evenodd"
+                    ></path>
+                  </svg>
+                </span>
+                <span>
+                  yourTrialPeriodExpires
+                  <span class="font-bold">
+                    den
+                    {{
+                      convertUnixTimestampToSweDateAndMonth(
+                        sub?.current_period_end
+                      )
+                    }}
+                  </span>
                 </span>
               </span>
-            </span>
 
-            <span
-              class="updatesAt block my-3"
-              v-if="!subscription.cancel_at_period_end"
-            >
-              Abonnemanget
-              <b>förnyas</b> den:
-              <br />
-              <b class="text-sm">
-                {{
-                  convertUnixTimestampToSwedishDate(
-                    subscription.current_period_end
-                  )
-                }}</b
+              <span class="updatesAt block" v-if="!sub?.cancel_at_period_end">
+                theSubscription
+                <b class="text-lg text-[#abfc9b]">renews:</b>
+                <br />
+                <b>
+                  {{
+                    convertUnixTimestampToSwedishDate(sub?.current_period_end)
+                  }}
+                </b>
+              </span>
+
+              <span class="endsAt block" v-if="sub?.cancel_at_period_end">
+                theSubscription
+                <b class="text-lg text-[#fc9b9b]">expires</b>
+                the
+                <br />
+                <b class="text-sm">
+                  {{ convertUnixTimestampToSwedishDate(sub.cancel_at) }}
+                </b>
+              </span>
+
+              <span
+                :class="[
+                  isBusy ? 'opacity-55 pointer-events-none' : 'bg-opacity-100',
+                  !sub?.cancel_at_period_end
+                    ? 'btn-error bg-[#e9343e]  text-white'
+                    : 'btn-success bg-[#25a335]  text-white',
+                ]"
+                class="btn btn-md border-none my-2"
+                @click="subOrUnsub()"
               >
-
-              <span class="text-xs block pt-2 max-w-xs m-auto"
-                >(om du vill avsluta prenumerationen bör du gå in på
-                Hantera-Prenumeration och då avbryta prenumerationen)</span
-              >
-            </span>
-
-            <span
-              class="endsAt block my-3"
-              v-if="subscription.cancel_at_period_end"
-            >
-              Abonnemanget <b>avslutas</b> den:<br />
-
-              <b class="text-sm">{{
-                convertUnixTimestampToSwedishDate(subscription.cancel_at)
-              }}</b>
-            </span>
-          </div>
-
-          <form action="/api/stripe/createPortalSession" method="post">
-            <input type="hidden" name="user_id" :value="user.id" />
-            <button
-              type="submit"
-              href="#"
-              aria-describedby="tier-hobby"
-              class="btn btn-sm btn-neutral shadow-md my-2 rounded-full"
-            >
-              Hantera prenumeration
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-5 h-5 ml-2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                />
-              </svg>
-            </button>
-          </form>
-        </div>
-      </div>
+                <template v-if="!sub?.cancel_at_period_end">
+                  cancelSubscription
+                </template>
+                <template v-else>reSubscribe</template>
+              </span>
+            </div>
+          </DisclosurePanel>
+        </transition>
+      </Disclosure>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   convertUnixTimestampToSwedishDate,
   convertUnixTimestampToSweDateAndMonth,
+  postToApi,
 } from "../helpers/webhelper";
-const user = useSupabaseUser();
+import {
+  enterMaxHeight,
+  leaveMaxHeight,
+  beforeEnterMaxHeight,
+} from "../helpers/transitionHelpers";
 const emit = defineEmits(["isPending"]);
-defineProps(["subscription"]);
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { ChevronUpIcon } from "@heroicons/vue/20/solid";
+import type { SubscriptionDetails } from "~/helpers/supabasehelper";
+
+const props = defineProps({
+  subscription: Object as PropType<SubscriptionDetails>,
+});
+const { notify } = useNotifier();
+const sub = ref<SubscriptionDetails>(props.subscription!);
+const isBusy = ref(false);
+
+function isTrialing() {
+  return sub.value?.status == "trialing";
+}
+
+function subClasses() {
+  if (!sub.value?.cancel_at_period_end) {
+    return "background-color:rgb(37 163 53 / 20%);";
+  } else if (isTrialing()) {
+    return "background-color:rgb(234 179 8 / 20%);";
+  }
+  return "background-color:rgb(233 52 62 / 20%); ";
+}
+
+function subOrUnsub() {
+  if (!sub.value?.cancel_at_period_end) {
+    unsubscribe();
+    return;
+  }
+
+  renewsubscription();
+}
+
+async function unsubscribe() {
+  if (!props.subscription?.id) {
+    return;
+  }
+
+  isBusy.value = true;
+  const { data, error } = await postToApi("unsubscribe", {
+    subscriptionId: props.subscription.id,
+  });
+
+  if (error) {
+    // notify user
+    notify("error unsubscribe", "danger");
+    isBusy.value = false;
+    return;
+  }
+
+  if (data) {
+    sub.value = convertStripeSubscriptionToSubscriptionDetails(data);
+    // notify user
+    notify("Du har avslutat din prenumeration", "warning");
+  }
+  isBusy.value = false;
+}
+
+async function renewsubscription() {
+  if (!props.subscription?.id) {
+    return;
+  }
+  isBusy.value = true;
+  const { data, error } = await postToApi("renewsubscription", {
+    subscriptionId: props.subscription.id,
+  });
+
+  if (error) {
+    // notify user
+    notify("Fel vid förnyelse av prenumeration", "danger");
+    isBusy.value = false;
+    return;
+  }
+
+  if (data) {
+    // notify
+    notify("Du har förnyat din prenumeration");
+    sub.value = convertStripeSubscriptionToSubscriptionDetails(data);
+  }
+  isBusy.value = false;
+}
 </script>

@@ -25,3 +25,25 @@ export function convertUnixTimestampToSweDateAndMonth(unixTimestamp: any) {
   };
   return new Intl.DateTimeFormat("sv-SE", options as any).format(date);
 }
+
+export async function postToApi(endpoint: string, bodyData: Object) {
+  try {
+    const apiUrl = "/api/";
+    const response = await fetch(apiUrl + endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json(); // Anta att svaret är i JSON-format
+    return data;
+  } catch (error) {
+    console.error("Error in API call:", error);
+  }
+}

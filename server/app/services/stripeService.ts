@@ -61,3 +61,31 @@ export async function getSubscribeUrl(
 
   return { url: sessionUrl, user, shouldUpdateUser };
 }
+
+export async function cancelSubscription(subscriptionId: string) {
+  try {
+    const canceledSubscription = await stripe.subscriptions.update(
+      subscriptionId,
+      {
+        cancel_at_period_end: true,
+      }
+    );
+    return { data: canceledSubscription, error: null };
+  } catch (error) {
+    return { data: null, error: error };
+  }
+}
+
+export async function reactivateSubscription(subscriptionId: string) {
+  try {
+    const reactivatedSubscription = await stripe.subscriptions.update(
+      subscriptionId,
+      {
+        cancel_at_period_end: false,
+      }
+    );
+    return { data: reactivatedSubscription, error: null };
+  } catch (error) {
+    return { data: null, error: error };
+  }
+}

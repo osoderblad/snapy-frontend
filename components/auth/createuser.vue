@@ -13,7 +13,7 @@
             autocomplete="off"
             pattern="/^[^\s@]+@[^\s@]+\.[^\s@]+$/"
             v-model="userForm.email"
-            @blur="checkEmail"
+            :on-keydown="checkEmail()"
             @focus="emailError = false"
             placeholder="Email"
           />
@@ -47,7 +47,7 @@
 
       <div class="my-5">
         <span
-          class="btn btn-primary w-full max-w-40"
+          class="btn btn-accent w-full max-w-40"
           @click="createUser"
           :class="isBusy || !isValid ? 'disabled' : ''"
         >

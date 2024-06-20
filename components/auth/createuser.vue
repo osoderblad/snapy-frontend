@@ -59,7 +59,11 @@
 
     <div class="divider">Eller</div>
     <div class="w-full text-center">
-      <button @click="authGoogle()" class="btn btn-outline ml-2 align-middle">
+      <button
+        disabled
+        @click="authGoogle()"
+        class="btn btn-outline ml-2 align-middle"
+      >
         <img
           src="~/assets/Google__G__Logo.svg"
           class="max-w-[20px] inline-block mr-2"

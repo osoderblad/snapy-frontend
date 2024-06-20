@@ -63,8 +63,8 @@
               </span>
 
               <span class="updatesAt block" v-if="!sub?.cancel_at_period_end">
-                theSubscription
-                <b class="text-lg text-[#abfc9b]">renews:</b>
+                Prenumerationen
+                <b class="text-lg text-[#abfc9b]">förnyas:</b>
                 <br />
                 <b>
                   {{
@@ -74,9 +74,9 @@
               </span>
 
               <span class="endsAt block" v-if="sub?.cancel_at_period_end">
-                theSubscription
-                <b class="text-lg text-[#fc9b9b]">expires</b>
-                the
+                Prenumerationen
+                <b class="text-lg text-[#fc9b9b]">upphör:</b>
+                den
                 <br />
                 <b class="text-sm">
                   {{ convertUnixTimestampToSwedishDate(sub.cancel_at) }}
@@ -94,9 +94,9 @@
                 @click="subOrUnsub()"
               >
                 <template v-if="!sub?.cancel_at_period_end">
-                  cancelSubscription
+                  Avbryt prenumeration
                 </template>
-                <template v-else>reSubscribe</template>
+                <template v-else>Förnya prenumeration</template>
               </span>
             </div>
           </DisclosurePanel>

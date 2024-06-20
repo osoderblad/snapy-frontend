@@ -7,13 +7,14 @@ import { getSubscribeUrl } from "../app/services/stripeService";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const price_id = body.price_id;
+  const name = body.name;
   const usera = await getCurrentUser(event);
 
   const {
     url,
     user: customer,
     shouldUpdateUser,
-  } = await getSubscribeUrl(price_id, usera);
+  } = await getSubscribeUrl(price_id, usera, name);
 
   if (shouldUpdateUser) {
     await updateStripeCustomerId(usera, event);

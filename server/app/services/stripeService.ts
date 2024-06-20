@@ -7,7 +7,8 @@ const stripe = StripeSingleton.getInstance();
 
 export async function getSubscribeUrl(
   price_id: string,
-  user: IUser
+  user: IUser,
+  name: string
 ): Promise<SubPostRes> {
   const customerEmail = user.email ? user.email : "";
   let shouldUpdateUser = false;
@@ -16,6 +17,7 @@ export async function getSubscribeUrl(
   subdata = {
     metadata: {
       customeremail: customerEmail,
+      name: name,
     },
   };
 

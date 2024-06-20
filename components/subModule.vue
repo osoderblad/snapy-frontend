@@ -41,6 +41,7 @@
         <div>
           <form action="/api/subscribe" method="post" v-if="user">
             <input type="hidden" name="customer_id" :value="user?.id" />
+            <input type="hidden" name="name" :value="tier.name" />
             <input type="hidden" name="price_id" :value="tier.id" />
             <button type="submit" href="#" aria-describedby="tier-hobby">
               <span

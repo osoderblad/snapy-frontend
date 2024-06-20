@@ -130,9 +130,6 @@ export type SubscriptionDetails = {
   cancel_at_period_end: boolean;
   cancel_at: string | number;
   created: string | number;
-
-  alternativeName: string;
-
   plan?: SubscriptionDetailsPlan;
 };
 
@@ -168,6 +165,6 @@ export function mapStripeSubscriptionToSubscriptionDetails(
       : false,
     cancel_at: subscription.cancel_at ? subscription.cancel_at : "",
     created: subscription.created,
-    alternativeName: "",
+    name: subscription.metadata["name"] ? subscription.metadata["name"] : "",
   };
 }

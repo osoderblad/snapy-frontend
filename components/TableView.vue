@@ -78,7 +78,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { getAllDomains, GetCount } from "~/helpers/domains/supabasehelper";
+import { getAllDomains, GetCount } from "~/helpers/supabasehelper";
 import { DomainColumns } from "~/helpers/domains/domainhelper";
 import type { CombinedDomainInfo } from "~/types/bardate_domains";
 import { useScroll } from "@vueuse/core";

@@ -1,7 +1,7 @@
 import {
   getCurrentUser,
   mapStripeSubscriptionToSubscriptionDetails,
-} from "~/helpers/domains/supabasehelper";
+} from "~/helpers/supabasehelper";
 import StripeSingleton from "~/server/utils/stripeSingleton";
 
 export async function getStripeProducts() {
@@ -56,4 +56,41 @@ export async function getUserSubscription() {
   var res = mapStripeSubscriptionToSubscriptionDetails(subscription.data[0]);
 
   return res;
+}
+
+export async function getSubscriptionByUserEmail(client: any, email: string) {
+  // @ts-ignore
+  const stripe = StripeSingleton.getInstance();
+
+  const timeStampNow = Math.floor(Date.now() / 1000);
+  const latestSub = await getLatestsubscriptions(client, email);
+
+  if (latestSub) {
+    if (timeStampNow >= latestSub.validto) {
+    } else {
+      return [{ status: "active", isPendingStatus: true }];
+    }
+  }
+
+  const subscription = await stripe.subscriptions.search({
+    query: `Metadata['customeremail']:'${email}'`,
+  });
+
+  if (subscription && subscription.data) {
+    var filterForTrialingOrActiveSubs = subscription.data.filter(
+      (i) => i.status == "active" || i.status == "trialing"
+    );
+    return filterForTrialingOrActiveSubs;
+  }
+
+  return [];
+}
+
+export async function getLatestsubscriptions(client: any, email: string) {
+  const { data } = await client
+    .from("latestsubscriptions")
+    .select("email, validto")
+    .eq("email", email)
+    .maybeSingle();
+  return data;
 }

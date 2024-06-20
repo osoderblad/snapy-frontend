@@ -1,5 +1,5 @@
 import type Stripe from "stripe";
-import { useSupabaseWrapper } from "../../utils/SupabaseWrapper";
+import { useSupabaseWrapper } from "../utils/SupabaseWrapper";
 import type { IUser } from "~/server/types/IUser";
 
 // export async function getAllDomains(from: number, to: number) {

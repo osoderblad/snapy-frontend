@@ -20,6 +20,32 @@
           />
         </div>
 
+        <div class="col-span-3 flex justify-center items-center">Typ</div>
+        <div class="col-span-9">
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Privat</span>
+              <input
+                type="radio"
+                name="radio-10"
+                class="radio checked:bg-red-500"
+                checked="checked"
+              />
+            </label>
+          </div>
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Företag</span>
+              <input
+                type="radio"
+                name="radio-10"
+                class="radio checked:bg-blue-500"
+                checked="checked"
+              />
+            </label>
+          </div>
+        </div>
+
         <!-- <div class="col-span-3 flex justify-center items-center">
            Kolumn
           </div>

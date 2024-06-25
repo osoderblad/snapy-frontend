@@ -25,6 +25,8 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.22",
     "@heroicons/vue": "^2.1.4",
-    "stripe": "^15.12.0"
+    "stripe": "^15.12.0",
+    "vee-validate": "^4.13.1",
+    "yup": "^1.4.0"
   }
 }

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <CompleteAccountBanner v-if="!accountCompleted"></CompleteAccountBanner>
     <Header />
     <Toast />
     <div
@@ -19,7 +20,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   LinkIcon,
   HomeIcon,
@@ -29,11 +30,44 @@ import {
 } from "@heroicons/vue/24/solid";
 const sideNavOpen = useState("sideNavOpen", () => true);
 useState("isLoginOpen", () => false);
+var accountCompleted = useState("accountCompleted", () => null);
+const client = useSupabaseClient();
+// const accountCompleted = ref(false);
+
+const CompleteAccountBanner = defineAsyncComponent(
+  () => import("~/asyncComponents/completeAccountBanner.vue")
+);
+
+onMounted(async () => {
+  accountCompleted.value = await IsAccountCompleted();
+});
 
 useHead({
   htmlAttrs: {
     "data-theme": "catppuccin",
   },
+});
+
+//listens on supabase auth state changes
+
+const { data } = client.auth.onAuthStateChange(async (event, session) => {
+  console.log(event, session);
+
+  if (event === "INITIAL_SESSION") {
+    // handle initial session
+  } else if (event === "SIGNED_IN") {
+    accountCompleted.value = await IsAccountCompleted();
+    // handle sign in event
+  } else if (event === "SIGNED_OUT") {
+    accountCompleted.value = await IsAccountCompleted();
+    // handle sign out event
+  } else if (event === "PASSWORD_RECOVERY") {
+    // handle password recovery event
+  } else if (event === "TOKEN_REFRESHED") {
+    // handle token refreshed event
+  } else if (event === "USER_UPDATED") {
+    // handle user updated event
+  }
 });
 
 useSeoMeta({

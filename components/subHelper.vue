@@ -11,97 +11,72 @@
         </span>
       </div>
 
-      <Disclosure v-slot="{ open }">
-        <DisclosureButton
-          class="w-full btn btn-ghost bg-gray-50 bg-opacity-5"
-          :style="subClasses()"
+      <div class="text-center">
+        <span
+          class="bg-yellow-500 bg-opacity-20 text-white font-extrabold text-sm py-1 px-4 rounded-lg flex items-center justify-center w-fit m-auto"
+          v-if="isTrialing()"
         >
-          <span class="font-bold text-md"> Hantera prenumeration </span>
-          <ChevronUpIcon
-            :class="open ? 'rotate-180 transform' : ''"
-            class="h-8 w-8 text-gray-400"
-          />
-        </DisclosureButton>
-        <transition
-          name="expand"
-          @before-enter="beforeEnterMaxHeight"
-          @enter="enterMaxHeight"
-          @leave="leaveMaxHeight"
+          <span class="mr-2">
+            <svg
+              aria-hidden="true"
+              class="fill-yellow-600"
+              height="12"
+              width="12"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm1-8.577V4a1 1 0 1 0-2 0v4a1 1 0 0 0 .517.876l2.581 1.49a1 1 0 0 0 1-1.732z"
+                fill-rule="evenodd"
+              ></path>
+            </svg>
+          </span>
+          <span>
+            yourTrialPeriodExpires
+            <span class="font-bold">
+              den
+              {{
+                convertUnixTimestampToSweDateAndMonth(sub?.current_period_end)
+              }}
+            </span>
+          </span>
+        </span>
+
+        <span class="updatesAt block" v-if="!sub?.cancel_at_period_end">
+          Prenumerationen
+          <b class="text-lg text-[#abfc9b]">förnyas:</b>
+          <br />
+          <b>
+            {{ convertUnixTimestampToSwedishDate(sub?.current_period_end) }}
+          </b>
+        </span>
+
+        <span class="endsAt block" v-if="sub?.cancel_at_period_end">
+          Prenumerationen
+          <b class="text-lg text-[#fc9b9b]">upphör:</b>
+          den
+          <br />
+          <b class="text-sm">
+            {{ convertUnixTimestampToSwedishDate(sub.cancel_at) }}
+          </b>
+        </span>
+
+        <span
+          :class="[
+            isBusy ? 'opacity-55 pointer-events-none' : 'bg-opacity-100',
+            !sub?.cancel_at_period_end
+              ? 'btn-error bg-[#e9343e]  text-white'
+              : 'btn-success bg-[#25a335]  text-white',
+          ]"
+          class="btn btn-md border-none my-2"
+          @click="subOrUnsub()"
         >
-          <DisclosurePanel class="text-sm">
-            <div class="p-2 py-4 pl-5 text-center">
-              <span
-                class="bg-yellow-500 bg-opacity-20 text-white font-extrabold text-sm py-1 px-4 rounded-lg flex items-center justify-center w-fit m-auto"
-                v-if="isTrialing()"
-              >
-                <span class="mr-2">
-                  <svg
-                    aria-hidden="true"
-                    class="fill-yellow-600"
-                    height="12"
-                    width="12"
-                    viewBox="0 0 16 16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm1-8.577V4a1 1 0 1 0-2 0v4a1 1 0 0 0 .517.876l2.581 1.49a1 1 0 0 0 1-1.732z"
-                      fill-rule="evenodd"
-                    ></path>
-                  </svg>
-                </span>
-                <span>
-                  yourTrialPeriodExpires
-                  <span class="font-bold">
-                    den
-                    {{
-                      convertUnixTimestampToSweDateAndMonth(
-                        sub?.current_period_end
-                      )
-                    }}
-                  </span>
-                </span>
-              </span>
-
-              <span class="updatesAt block" v-if="!sub?.cancel_at_period_end">
-                Prenumerationen
-                <b class="text-lg text-[#abfc9b]">förnyas:</b>
-                <br />
-                <b>
-                  {{
-                    convertUnixTimestampToSwedishDate(sub?.current_period_end)
-                  }}
-                </b>
-              </span>
-
-              <span class="endsAt block" v-if="sub?.cancel_at_period_end">
-                Prenumerationen
-                <b class="text-lg text-[#fc9b9b]">upphör:</b>
-                den
-                <br />
-                <b class="text-sm">
-                  {{ convertUnixTimestampToSwedishDate(sub.cancel_at) }}
-                </b>
-              </span>
-
-              <span
-                :class="[
-                  isBusy ? 'opacity-55 pointer-events-none' : 'bg-opacity-100',
-                  !sub?.cancel_at_period_end
-                    ? 'btn-error bg-[#e9343e]  text-white'
-                    : 'btn-success bg-[#25a335]  text-white',
-                ]"
-                class="btn btn-md border-none my-2"
-                @click="subOrUnsub()"
-              >
-                <template v-if="!sub?.cancel_at_period_end">
-                  Avbryt prenumeration
-                </template>
-                <template v-else>Förnya prenumeration</template>
-              </span>
-            </div>
-          </DisclosurePanel>
-        </transition>
-      </Disclosure>
+          <template v-if="!sub?.cancel_at_period_end">
+            Avbryt prenumeration
+          </template>
+          <template v-else>Förnya prenumeration</template>
+        </span>
+      </div>
     </div>
   </div>
 </template>

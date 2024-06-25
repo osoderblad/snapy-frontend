@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- max-w-[55px] -->
     <Header />
     <Toast />
     <div
@@ -14,7 +13,7 @@
       </aside>
       <div class="lg:col-span-8">
         <NuxtLoadingIndicator :height="4" :throttle="400" />
-        <NuxtPage keepalive />
+        <NuxtPage />
       </div>
     </div>
   </div>
@@ -26,6 +25,7 @@ import {
   HomeIcon,
   BriefcaseIcon,
   CreditCardIcon,
+  UserIcon,
 } from "@heroicons/vue/24/solid";
 const sideNavOpen = useState("sideNavOpen", () => true);
 useState("isLoginOpen", () => false);
@@ -53,9 +53,14 @@ const links = [
     to: "/user/domaner",
   },
   {
-    label: "Portfolio",
+    label: "Bokade domäner",
     icon: BriefcaseIcon,
     to: "/user/portfolio",
+  },
+  {
+    label: "Mitt Konto",
+    icon: UserIcon,
+    to: "/user/myaccount",
   },
   {
     label: "Prenumeration",

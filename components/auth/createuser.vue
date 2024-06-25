@@ -2,7 +2,7 @@
   <div class="my-5 text-center">
     <h3>Skapa Konto</h3>
 
-    <form class="block" autocomplete="off">
+    <form class="block" autocomplete="off" v-if="step == 1">
       <div class="">
         <div class="mb-4">
           <input
@@ -57,6 +57,8 @@
       </div>
     </form>
 
+    <form v-if="step == 2">Info om företaget</form>
+
     <div class="divider">Eller</div>
     <div class="w-full text-center">
       <button
@@ -80,7 +82,7 @@ const { notify } = useNotifier();
 const Passwordchecker = defineAsyncComponent(
   () => import("~/asyncComponents/passwordchecker.vue")
 );
-
+const step = ref(1);
 const isValidPassword = ref(false);
 const userForm = ref({
   email: "",

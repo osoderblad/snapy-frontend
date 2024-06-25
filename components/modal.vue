@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog as="div" @close="$emit('close')" class="relative z-10">
+    <Dialog as="div" @close="close()" class="relative z-10">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -39,7 +39,7 @@
                 </p>
               </div>
 
-              <div class="bg-[#E64553] text-red-200 rounded-lg p-5">
+              <div class="bg-[#ba3742] text-red-100 rounded-lg p-3">
                 <h4 class="mb-1 mt-0 text-lg">Tänk på</h4>
                 <ul class="list-disc ml-5 text-sm">
                   <li>Det är bindande att boka en domän</li>
@@ -48,11 +48,26 @@
                   <li>Domänen kan inte återbetalas</li>
                 </ul>
               </div>
+
+              <div class="form-control w-fit my-2">
+                <label class="label cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="consent"
+                    class="checkbox mr-3"
+                  />
+                  <span class="label-text"
+                    >Jag godkänner, och är införstående och våra
+                    tjänstevillkor.</span
+                  >
+                </label>
+              </div>
               <div class="mt-4">
                 <button
                   type="button"
+                  :disabled="!consent"
                   class="inline-flex justify-center rounded-full border border-transparent text-white bg-[#5F2DA5] px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  @click="$emit('close')"
+                  @click="bookIt()"
                 >
                   Ja, boka nu!
                 </button>
@@ -74,12 +89,39 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/vue";
-defineEmits(["close"]);
-
-// const isOpen = ref(true);
-
+import type { Snapback_Order } from "~/types/snapback_orders";
+const emit = defineEmits(["close"]);
+const { notify } = useNotifier();
 const props = defineProps<{
   isOpen: boolean;
   item: CombinedDomainInfo;
 }>();
+
+const consent = ref(false);
+
+function close() {
+  consent.value = false;
+  emit("close");
+}
+const bookIt = async () => {
+  const user_id = await getCustomerIdByUserId();
+  const client = useSupabaseWrapper();
+  const snapbackorder = {
+    customer_id: user_id,
+    domain_id: props.item.id,
+    domain_name: props.item.name,
+    order_status: "Pending",
+    order_time: new Date(),
+    payment_status: "Pending",
+    price: 1337,
+  } as unknown as Snapback_Order;
+
+  const res = client.insert("snapback_orders", snapbackorder);
+
+  if (res !== null) {
+    notify("Din domän är bokad! Tack för din bokning!");
+    emit("close");
+    return;
+  }
+};
 </script>

@@ -24,7 +24,7 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxtjs/supabase", "@nuxtjs/google-fonts"],
+  modules: ["@nuxtjs/supabase", "@nuxtjs/google-fonts", "@vee-validate/nuxt"],
   app: {
     pageTransition: { name: "page", mode: "out-in" },
   },

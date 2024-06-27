@@ -30,17 +30,13 @@ import {
 } from "@heroicons/vue/24/solid";
 const sideNavOpen = useState("sideNavOpen", () => true);
 useState("isLoginOpen", () => false);
-var accountCompleted = useState("accountCompleted", () => null);
+const accountCompleted = useState("accountCompleted", () => true);
 const client = useSupabaseClient();
-// const accountCompleted = ref(false);
-
 const CompleteAccountBanner = defineAsyncComponent(
   () => import("~/asyncComponents/completeAccountBanner.vue")
 );
 
-onMounted(async () => {
-  accountCompleted.value = await IsAccountCompleted();
-});
+accountCompleted.value = await IsAccountCompleted();
 
 useHead({
   htmlAttrs: {
@@ -49,13 +45,8 @@ useHead({
 });
 
 //listens on supabase auth state changes
-
-const { data } = client.auth.onAuthStateChange(async (event, session) => {
-  if (event === "INITIAL_SESSION") {
-    // handle initial session
-  } else if (event === "SIGNED_IN") {
-    accountCompleted.value = await IsAccountCompleted();
-  } else if (event === "SIGNED_OUT") {
+client.auth.onAuthStateChange(async (event) => {
+  if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
     accountCompleted.value = await IsAccountCompleted();
   }
 });

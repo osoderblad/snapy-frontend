@@ -1,5 +1,5 @@
 <template>
-  <section class="">
+  <section class="" v-if="!accountCompleted">
     <div class="w-full">
       <h3>Onboarding</h3>
     </div>
@@ -22,8 +22,8 @@
           validateOn="blur"
         >
           <option disabled value="">Select a type</option>
-          <option value="private">Private</option>
-          <option value="business">Business</option>
+          <option value="Private">Private</option>
+          <option value="Business">Business</option>
         </Field>
         <ErrorMessage name="type" class="text-red-500" />
       </div>
@@ -54,9 +54,7 @@
         />
         <ErrorMessage name="email" class="text-red-500" />
       </div>
-      <div class="col-span-12">
-        <div class="divider">Frivilliga fält</div>
-      </div>
+
       <!-- Phone Field -->
       <div class="col-span-3 flex justify-center items-center">Phone</div>
       <div class="col-span-9">
@@ -70,10 +68,13 @@
       </div>
 
       <!-- Organization Number Field -->
-      <div class="col-span-3 flex justify-center items-center">
+      <div
+        v-if="customer.type == 'Business'"
+        class="col-span-3 flex justify-center items-center"
+      >
         Organization Number
       </div>
-      <div class="col-span-9">
+      <div v-if="customer.type == 'Business'" class="col-span-9">
         <Field
           name="organization_number"
           v-model="customer.organization_number"
@@ -83,14 +84,23 @@
       </div>
 
       <!-- PIN Field -->
-      <div class="col-span-3 flex justify-center items-center">PIN</div>
-      <div class="col-span-9">
+      <div
+        v-if="customer.type == 'Private'"
+        class="col-span-3 flex justify-center items-center"
+      >
+        Personnummer
+      </div>
+      <div v-if="customer.type == 'Private'" class="col-span-9">
         <Field
           name="pin"
           v-model="customer.pin"
           class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
         />
         <ErrorMessage name="pin" class="text-red-500" />
+      </div>
+
+      <div class="col-span-12">
+        <div class="divider">Frivilliga fält</div>
       </div>
 
       <!-- Address Field -->
@@ -152,7 +162,7 @@
       </div>
 
       <!-- NameSRS ID Field -->
-      <div class="col-span-3 flex justify-center items-center">NameSRS ID</div>
+      <!-- <div class="col-span-3 flex justify-center items-center">NameSRS ID</div>
       <div class="col-span-9">
         <Field
           name="namesrs_id"
@@ -160,10 +170,10 @@
           class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
         />
         <ErrorMessage name="namesrs_id" class="text-red-500" />
-      </div>
+      </div> -->
 
       <!-- Fortnox Customer Number Field -->
-      <div class="col-span-3 flex justify-center items-center">
+      <!-- <div class="col-span-3 flex justify-center items-center">
         Fortnox Customer Number
       </div>
       <div class="col-span-9">
@@ -173,7 +183,7 @@
           class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
         />
         <ErrorMessage name="fortnox_customer_number" class="text-red-500" />
-      </div>
+      </div> -->
 
       <!-- Submit Button -->
       <div class="col-span-12 flex justify-center">
@@ -189,7 +199,8 @@
 import { ref } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
-
+const { notify } = useNotifier();
+const accountCompleted = useState("accountCompleted");
 const customer = ref({
   type: null,
   name: null,
@@ -202,21 +213,33 @@ const customer = ref({
   city: null,
   country: null,
   invoice_email: null,
-  namesrs_id: null,
-  fortnox_customer_number: null,
+  // namesrs_id: null,
+  // fortnox_customer_number: null,
+});
+
+onMounted(() => {
+  if (accountCompleted.value) {
+    navigateTo("/");
+  }
+});
+
+watch(accountCompleted, (value) => {
+  if (value === true) {
+    navigateTo("/");
+  }
 });
 
 const schema = yup.object({
   type: yup
     .string()
     .required("Type is required")
-    .oneOf(["private", "business"], "Invalid customer type"),
+    .oneOf(["Private", "Business"], "Invalid customer type"),
   name: yup.string().required("Name is required"),
   email: yup
     .string()
     .email("Invalid email address")
     .required("Email is required"),
-  phone: yup.string().nullable(),
+  phone: yup.string().required(),
   organization_number: yup.string().nullable(),
   pin: yup.string().nullable(),
   address: yup.string().nullable(),
@@ -224,26 +247,39 @@ const schema = yup.object({
   city: yup.string().nullable(),
   country: yup.string().default("Sverige").nullable(),
   invoice_email: yup.string().email("Invalid email address").nullable(),
-  namesrs_id: yup.number().nullable(),
-  fortnox_customer_number: yup.number().nullable(),
+  // namesrs_id: yup.number().nullable(),
+  // fortnox_customer_number: yup.number().nullable(),
 });
 
 async function onSubmit(values: any) {
-  const client = await useSupabaseClient();
-  console.log(values);
+  const client = useSupabaseClient();
+  const user = useSupabaseUser();
+
   var { data, error } = await client
     //@ts-ignore
     .schema("public")
     .from("customers")
-    .insert(values);
+    .insert(values)
+    .select("customer_id")
+    .single();
 
   console.log(data);
-  console.log(error);
-
   if (data) {
-    console.error(data);
-  }
+    // lägg till koppling till customers_users tabellen
 
-  // Here you would typically make an API call to save the customer
+    if (user && user.value) {
+      var { data: cu, error } = await client
+        //@ts-ignore
+        .schema("public")
+        .from("customer_users")
+        .insert({ customer_id: data.customer_id, user_id: user.value.id });
+
+      if (!error) {
+        accountCompleted.value = true;
+        navigateTo("/");
+        notify("Kund skapad");
+      }
+    }
+  }
 }
 </script>

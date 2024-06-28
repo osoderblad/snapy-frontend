@@ -284,23 +284,6 @@ const schema = yup.object({
     .required("Mejl är obligatoriskt"),
   phone: yup.string().required(),
 
-  // organization_number: yup
-  //   .string()
-  //   .when("type", (type) =>
-  //     ["Business", "Private"].includes(type as any)
-  //       ? yup
-  //           .string()
-  //           .required("Organisationsnummer är obligatoriskt för företag")
-  //       : yup.string().notRequired()
-  //   ),
-  // pin: yup
-  //   .string()
-  //   .when("type", (type) =>
-  //     ["Business", "Private"].includes(type as any)
-  //       ? yup.string().required("PIN är obligatoriskt för privatpersoner")
-  //       : yup.string().notRequired()
-  //   ),
-
   organization_number: yup
     .string()
     .when("type", (type) =>
@@ -316,37 +299,25 @@ const schema = yup.object({
         : yup.string().nullable().notRequired()
     ),
 
-  // organization_number: yup.string().when("type", {
-  //   is: (val: any) => {
-  //     //this will output undefined
-  //     console.log(val === "Business");
-  //     return val === "Business";
-  //   },
-  //   then: (s) => s.required(),
-  //   otherwise: (s) => s.nullable(),
-  // }),
-
-  // pin: yup.string().when("type", {
-  //   is: (val: any) => {
-  //     //this will output undefined
-  //     return val === "Private";
-  //   },
-  //   then: (s) => s.required(),
-  //   otherwise: (s) => s.nullable(),
-  // }),
-
   address: yup.string().required(),
   postal_code: yup.number().required(),
   city: yup.string().required(),
   country: yup.string().default("Sverige").required(),
   invoice_email: yup.string().email("Invalid email address").nullable(),
-  // namesrs_id: yup.number().nullable(),
-  // fortnox_customer_number: yup.number().nullable(),
 });
 
 async function onSubmit(values: any) {
   const client = useSupabaseClient();
   const user = useSupabaseUser();
+
+  // if type is private, remove organization number
+  if (values.type === "Private") {
+    delete values.organization_number;
+  }
+  // if type is business, remove pin
+  if (values.type === "Business") {
+    delete values.pin;
+  }
 
   var { data, error } = await client
     //@ts-ignore

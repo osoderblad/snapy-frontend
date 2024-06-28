@@ -1,140 +1,190 @@
 <template>
   <div>
-    <label class="form-control w-full">
+    <span>Visar: {{ count }} av {{ totalItems }}</span>
+
+    <Modal
+      :isOpen="modelIsOpen"
+      @close="modelIsOpen = false"
+      :item="selectedItem"
+    ></Modal>
+
+    <span class="opacity-10 mx-2 text-sm">i vy: {{ domains.length }}</span>
+    <div class="flex px-3 py-3.5 pl-0">
       <input
-        v-model="search"
-        type="text"
-        placeholder="Sök..."
-        class="input bg-secondary w-full max-w-xs mb-2" />
-    </label>
-
-    <div class="table-container overflow-auto">
-      <table
-        class="table mb-10 table-xs lg:table-md"
-        :style="`width:${width}px;`">
-        <tr class="opacity-60">
-          <th :style="`width:${item.width}`" v-for="item in options?.columns">
-            {{ item.name }}
-          </th>
-        </tr>
-        <tbody>
-          <tr v-for="item in filteredList" class="h-12" :key="item.id">
-            <th>
-              <span class="badge badge-ghost badge-sm">
-                <MyNuxtLink :to="`/admin/edit/${type}/${item.id}`">
-                  <PencilIcon class="h-5 w-5 inline"></PencilIcon>
-                </MyNuxtLink>
-              </span>
-            </th>
-            <td>
-              <span class="text-gray-400 text-xs">({{ item.id }})</span>
-
-              <span class="ml-2">{{ item.title || item.name }}</span>
-            </td>
-            <td>
-              <span>
-                {{
-                  item.publication_date
-                    ? dateTimeToDate(item.publication_date)
-                    : dateTimeToDate(item.created_at)
-                }}
-              </span>
-            </td>
-            <th v-if="type == 'course'">
-              <span class="text-xs" v-if="item.stripe_id">
-                {{ item.stripe_id }}
-              </span>
-              <span
-                v-else
-                class="bg-red-400 bg-opacity-45 text-red-100 p-1 rounded-md text-xs">
-                Ingen koppling
-              </span>
-            </th>
-            <th v-if="type == 'course' || type == 'article'">
-              <MyNuxtLink target="_blank" :to="`/${type}/${item.slug}`">
-                <button class="text-xs">
-                  {{ item.slug }}
-                  <LinkIcon class="h-4 w-4 inline"></LinkIcon>
+        v-model="q"
+        class="input bg-primary text-black placeholder-gray-400 dark:bg-[#20697C] dark:text-[#B7FBFF] dark:placeholder-[#B7FBFF]"
+        placeholder="Filtrera domäner..."
+      />
+    </div>
+    <div
+      class="block bg-gray-300 bg-opacity-10 dark:bg-slate-50 dark:bg-opacity-5 rounded-lg shadow-md"
+    >
+      <div class="overflow-x-scroll h-[65vh] relative" ref="el">
+        <span
+          v-if="isBusy"
+          class="loading loading-spinner absolute left-2 top-2 z-[100] bg-fuchsia-500"
+        ></span>
+        <table class="table" v-show="domains.length > 0">
+          <thead>
+            <tr>
+              <th
+                v-for="column in columns"
+                :key="column.key"
+                @click="column.sortable ? sortBy(column.key) : null"
+              >
+                {{ column.label }}
+                <span v-if="sortColumn.value === column.key">
+                  {{ sortDirection.value === "asc" ? "↑" : "↓" }}
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in domains" :key="item.id">
+              <td v-for="column in columns" :key="column.key">
+                {{ item[column.key] }}
+              </td>
+              <td>
+                <button
+                  class="btn btn-ghost bg-[#1D2234] btn-sm rounded-full"
+                  @click="openModal(item)"
+                >
+                  Boka
                 </button>
-              </MyNuxtLink>
-            </th>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th v-for="column in columns" :key="column.key">
+                {{ column.label }}
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+        <span
+          v-if="domains.length > 0"
+          class="btn btn-primary"
+          :class="isLastPage ? 'hidden' : ''"
+          @click="loadMore"
+          >Ladda fler</span
+        >
+        <span v-if="domains.length == 0">Empty table</span>
+      </div>
+    </div>
+    <div class="flex justify-center py-10" v-if="!isBusy">
+      <span v-if="isBusy" class="loading loading-spinner opacity-50"></span>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import type { PropType } from "vue";
-import type { Course } from "~/types/database/course";
-import type { ProductView } from "~/types/database/product";
-import { dateTimeToDate } from "~/utils/webHelper";
-import { PencilIcon, LinkIcon } from "@heroicons/vue/24/solid";
-import type { Article } from "~/types/database/article";
-const search = ref("");
-const props = defineProps({
-  list: Object as any,
-  type: String as PropType<
-    "product" | "course" | "article" | "testimonial" | "rootpage"
-  >,
-  options: Object as PropType<TableOptions>,
-  width: Number,
+import { getAllDomains, GetCount } from "~/helpers/supabasehelper";
+import { DomainColumns } from "~/helpers/domains/domainhelper";
+import type { CombinedDomainInfo } from "~/types/bardate_domains";
+import { useScroll, watchDebounced } from "@vueuse/core";
+
+import { ref, onMounted } from "vue";
+const modelIsOpen = ref(false);
+const selectedItem = ref<CombinedDomainInfo | null>(null);
+const columns = DomainColumns;
+const isBusy = ref(false);
+const el = ref(null);
+const pageSize = 30;
+const domains = ref([] as CombinedDomainInfo[]);
+const q = ref("");
+const count = ref(0);
+const sortColumn = ref("");
+const sortDirection = ref("");
+const currentPage = ref(1);
+const totalItems = ref(0);
+const behavior = computed(() => "smooth");
+const { x, y, isScrolling, arrivedState, directions } = useScroll(el, {
+  behavior,
+});
+const { left, right, top, bottom } = toRefs(arrivedState);
+const isLastPage = computed(() => {
+  const maxPage = Math.ceil(totalItems.value / pageSize);
+  if (count.value < pageSize) {
+    return true;
+  }
+  return currentPage.value >= maxPage;
 });
 
-const filteredList = computed(() => {
-  const sv = search.value?.toLowerCase();
-
-  let filtered = props.list?.filter((item: ProductView | Course | Article) => {
-    if (props.type == "article") {
-      var article = item as Article;
-      return (
-        article.title?.toLowerCase().includes(sv) ||
-        article.slug?.toLowerCase().includes(sv) ||
-        article.publication_date?.toString().toLowerCase().includes(sv) ||
-        article.id?.toString()?.toLowerCase().includes(sv)
-      );
-    }
-
-    var coupr = item as ProductView | Course;
-    //@ts-ignore
-    var nameortitle = coupr.title || coupr.name;
-    return (
-      nameortitle.toLowerCase().includes(sv) ||
-      coupr.slug?.toLowerCase().includes(sv) ||
-      coupr.stripe_id?.toLowerCase().includes(sv) ||
-      coupr.created_at?.toString().toLowerCase().includes(sv) ||
-      coupr.id.toString()?.toLowerCase().includes(sv)
-    );
-  });
-
-  return filtered?.sort((a: any, b: any) => {
-    let dateA =
-      props.type == "article"
-        ? new Date((a as Article).publication_date)
-        : new Date((a as any).created_at);
-    let dateB =
-      props.type == "article"
-        ? new Date((b as Article).publication_date)
-        : new Date((b as any).created_at);
-
-    // Ändra `dateA < dateB` till `dateA > dateB` om du vill sortera i fallande ordning (nyaste först)
-    return dateA > dateB ? -1 : 1;
-  });
-});
-
-export type TableOptions = {
-  type: "product" | "course" | "article" | "testimonial";
-  columns: TableColumn[];
-};
-export type TableColumn = {
-  name: string;
-
-  width: string;
-};
-</script>
-<style>
-.table :where(thead, tbody) :where(tr:not(:last-child)) {
-  border-color: rgb(65, 65, 65);
+async function updatePage(page) {
+  isBusy.value = true;
+  currentPage.value = page;
+  const from = (currentPage.value - 1) * pageSize;
+  const to = currentPage.value * pageSize - 1;
+  await getDomains(from, to, q.value.trim());
+  isBusy.value = false;
 }
-</style>
+
+function openModal(item: any) {
+  selectedItem.value = item;
+  modelIsOpen.value = true;
+}
+
+function calculateCurrentPage(totalItems, currentIndex) {
+  const itemsPerPage = pageSize;
+  return Math.ceil((currentIndex + 1) / itemsPerPage);
+}
+
+onMounted(async () => {
+  totalItems.value = await GetCount();
+  await updatePage(1);
+});
+
+async function getDomains(from, to, q) {
+  isBusy.value = true;
+  const res = await getAllDomains(
+    from,
+    to,
+    q,
+    sortColumn.value,
+    sortDirection.value
+  );
+  isBusy.value = false;
+
+  if (currentPage.value === 1) {
+    domains.value = res.data;
+  } else {
+    domains.value.push(...res.data);
+  }
+  count.value = res.count;
+}
+
+watchDebounced(
+  [q, sortColumn, sortDirection],
+  () => {
+    updatePage(1);
+  },
+  { debounce: 300, maxWait: 1000 }
+);
+
+function loadMore() {
+  if (!isLastPage.value && domains.value.length < totalItems.value) {
+    updatePage(currentPage.value + 1);
+  }
+}
+
+watch(bottom, async (newValue) => {
+  if (domains.value.length > 0 && newValue && !isLastPage.value) {
+    updatePage(currentPage.value + 1);
+  }
+});
+
+const sortBy = (key) => {
+  if (sortColumn.value === key) {
+    sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+  } else {
+    sortColumn.value = key;
+    sortDirection.value = "asc";
+  }
+};
+
+// function toggleModal(): void {
+//   showModal.value = !showModal.value;
+// }
+</script>
+
+<style></style>

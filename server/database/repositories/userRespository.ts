@@ -65,9 +65,11 @@ export async function updateStripeCustomerId(data: IUser, event: any) {
   const client = await serverSupabaseClient(event);
 
   const { status } = await client
-    .from("users")
+    //@ts-ignore
+    .schema("public")
+    .from("user_profiles")
     .update({ stripeCustomerId: data.stripeCustomerId } as never)
-    .eq("id", data.id as number);
+    .eq("id", data.id);
 
   return status;
 }

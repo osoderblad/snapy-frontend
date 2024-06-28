@@ -49,12 +49,10 @@ const loaded = ref(false);
 
 const accountCompleted = useState("accountCompleted");
 
-onMounted(async () => {
-  const { data, error } = await getBookedDomains();
+const { data, error } = await getBookedDomains();
 
-  if (!error) {
-    loaded.value = true;
-    bookedDomains.value = data;
-  }
-});
+if (!error) {
+  loaded.value = true;
+  bookedDomains.value = data;
+}
 </script>

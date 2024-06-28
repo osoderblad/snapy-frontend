@@ -46,7 +46,7 @@ export default defineNuxtConfig({
     useStylesheet: true,
   },
 
-  routeRules: {
-    "/*": { ssr: false },
-  },
+  // routeRules: {
+  //   "/*": { ssr: false },
+  // },
 });

@@ -16,7 +16,7 @@ import type { SubscriptionDetails } from "~/helpers/supabasehelper";
 const sub = ref<SubscriptionDetails | null>(null);
 const loaded = ref(false);
 onMounted(async () => {
-  if (!sub.value) {
+  if (sub && !sub.value) {
     sub.value = await getUserSubscription();
     loaded.value = true;
   }

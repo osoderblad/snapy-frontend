@@ -2,7 +2,7 @@ import type { Snapback_Order } from "~/types/snapback_orders";
 
 export async function getCustomerIdByUserId() {
   const client = useSupabaseClient();
-  const user = await useSupabaseUser();
+  const user = useSupabaseUser();
 
   var { data, error } = await client
     //@ts-ignore
@@ -32,7 +32,7 @@ export async function getBookedDomains() {
 }
 
 export async function IsAccountCompleted() {
-  const user = await useSupabaseUser();
+  const user = useSupabaseUser();
   if (user && !user.value) {
     return true;
   }
@@ -54,7 +54,7 @@ export async function IsAccountCompleted() {
 }
 
 export async function GetCustomer(customer_id: number) {
-  const client = useSupabaseClient();
+  const client = await useSupabaseClient();
 
   var { data, error } = await client
     //@ts-ignore

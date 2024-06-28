@@ -1,8 +1,8 @@
 import { getCurrentUser } from "~~/server/database/repositories/userRespository";
-const config = useRuntimeConfig();
 import StripeSingleton from "~/server/utils/stripeSingleton";
 
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig();
   const user = await getCurrentUser(event);
   const stripe = StripeSingleton.getInstance();
   let stripe_id = user.stripeCustomerId ? user.stripeCustomerId : "";

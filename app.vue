@@ -1,8 +1,10 @@
 <template>
   <div>
-    <CompleteAccountBanner v-if="!accountCompleted"></CompleteAccountBanner>
     <Header />
-    <Toast />
+    <ClientOnly>
+      <CompleteAccountBanner v-if="!accountCompleted"></CompleteAccountBanner>
+      <Toast />
+    </ClientOnly>
     <div
       class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5 p-2"
     >
@@ -36,7 +38,9 @@ const CompleteAccountBanner = defineAsyncComponent(
   () => import("~/asyncComponents/completeAccountBanner.vue")
 );
 
-accountCompleted.value = await IsAccountCompleted();
+onMounted(async () => {
+  accountCompleted.value = await IsAccountCompleted();
+});
 
 useHead({
   htmlAttrs: {

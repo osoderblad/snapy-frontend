@@ -1,4 +1,3 @@
-const config = useRuntimeConfig();
 import type Stripe from "stripe";
 import type { IUser } from "~/server/types/IUser";
 import type { SubPostRes } from "~/server/types/SubPostRes";
@@ -13,7 +12,7 @@ export async function getSubscribeUrl(
   const customerEmail = user.email ? user.email : "";
   let shouldUpdateUser = false;
   var subdata = {} as Stripe.Checkout.SessionCreateParams.SubscriptionData;
-
+  const config = useRuntimeConfig();
   subdata = {
     metadata: {
       customeremail: customerEmail,
@@ -46,10 +45,10 @@ export async function getSubscribeUrl(
     success_url: `${config.public.appDomain}`,
     cancel_url: `${config.public.appDomain}`,
     customer: user.stripeCustomerId,
-    customer_update: { shipping: "auto" },
-    shipping_address_collection: {
-      allowed_countries: ["SE"],
-    },
+    customer_update: { shipping: "auto", address: "auto" },
+    // shipping_address_collection: {
+    //   allowed_countries: ["SE"],
+    // },
     allow_promotion_codes: true,
     subscription_data: subdata,
     consent_collection: {

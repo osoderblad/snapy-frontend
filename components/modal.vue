@@ -96,8 +96,33 @@ const props = defineProps<{
   isOpen: boolean;
   item: CombinedDomainInfo;
 }>();
-
+const client = useSupabaseWrapper();
+const available = ref(false);
 const consent = ref(false);
+
+// CheckAvailability
+// await CheckAvailability();
+
+watch(
+  () => props.isOpen,
+  async (newValue) => {
+    if (newValue && props.item) {
+      await CheckAvailability();
+    }
+  }
+);
+async function CheckAvailability() {
+  // Check if domain is available
+  // If available, set available to true
+  const client = useSupabaseWrapper();
+
+  const data = await client
+    .select<Snapback_Order[]>("snapback_orders", "*")
+    .eq("domain_id", props.item.id);
+
+  console.log(data);
+  available.value = true;
+}
 
 function close() {
   consent.value = false;
@@ -105,7 +130,7 @@ function close() {
 }
 const bookIt = async () => {
   const user_id = await getCustomerIdByUserId();
-  const client = useSupabaseWrapper();
+
   const snapbackorder = {
     customer_id: user_id,
     domain_id: props.item.id,

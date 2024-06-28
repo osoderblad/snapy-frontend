@@ -6,6 +6,7 @@
       :isOpen="modelIsOpen"
       @close="modelIsOpen = false"
       :item="selectedItem"
+      v-if="selectedItem"
     ></Modal>
 
     <span class="opacity-10 mx-2 text-sm">i vy: {{ domains.length }}</span>

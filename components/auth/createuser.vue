@@ -129,6 +129,7 @@ async function validateForm() {
 }
 
 async function createUser() {
+  isBusy.value = true;
   var isFormValid = await validateForm();
   if (isFormValid) {
     const { error } = await client.auth.signUp({
@@ -141,11 +142,10 @@ async function createUser() {
     } else {
       notify("Konto skapat, kolla din mail för att aktivera kontot.");
     }
-    isBusy.value = true;
   } else {
+    isBusy.value = false;
     return;
   }
-
   isBusy.value = false;
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div v-if="loaded">
+    <div v-show="loaded">
       <SubModule v-if="!sub"></SubModule>
       <div v-if="sub">
         <div class="text-center my-2">
@@ -15,10 +15,9 @@
 import type { SubscriptionDetails } from "~/helpers/supabasehelper";
 const sub = ref<SubscriptionDetails | null>(null);
 const loaded = ref(false);
+
 onMounted(async () => {
-  if (sub && !sub.value) {
-    sub.value = await getUserSubscription();
-    loaded.value = true;
-  }
+  sub.value = await getUserSubscription();
+  loaded.value = true;
 });
 </script>

@@ -4,88 +4,92 @@
       <h3>Mitt Konto!</h3>
     </div>
 
-    <div v-if="user">
-      <i class="text-sm">
-        Konto skapat: {{ user.created_at?.split("T")[0] }}
-      </i>
+    <div v-if="userCustomer?.Customer" class="mb-6">
+      <h4>
+        Kundinformation
+        <span v-if="userCustomer.Customer.type === 'Private'">(Privat)</span>
+        <span v-if="userCustomer.Customer.type === 'Business'">(Företag)</span>
+      </h4>
 
-      <div class="mt-2 grid grid-cols-12 gap-6 py-5 max-w-[450px] w-full">
-        <div class="col-span-3 flex justify-center items-center">Email</div>
-        <div class="col-span-9">
-          <input
-            type="text"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-            disabled
-            :value="user.email"
-          />
-        </div>
+      <ElementInputAndLabel
+        class="my-2"
+        v-model="userCustomer.Customer.email"
+        label="Mejl"
+        type="text"
+        :disabled="true"
+      ></ElementInputAndLabel>
 
-        <div class="col-span-3 flex justify-center items-center">Typ</div>
-        <div class="col-span-9">
-          <div class="form-control">
-            <label class="label cursor-pointer">
-              <span class="label-text">Privat</span>
-              <input
-                type="radio"
-                name="radio-10"
-                class="radio checked:bg-red-500"
-                checked="checked"
-              />
-            </label>
-          </div>
-          <div class="form-control">
-            <label class="label cursor-pointer">
-              <span class="label-text">Företag</span>
-              <input
-                type="radio"
-                name="radio-10"
-                class="radio checked:bg-blue-500"
-                checked="checked"
-              />
-            </label>
-          </div>
-        </div>
+      <ElementInputAndLabel
+        class="my-2"
+        v-model="userCustomer.Customer.name"
+        label="Namn"
+        type="text"
+        :disabled="true"
+      ></ElementInputAndLabel>
 
-        <!-- <div class="col-span-3 flex justify-center items-center">
-           Kolumn
-          </div>
-          <div class="col-span-9">
-            <input
-              type="text"
-              class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-              placeholder="t('username')"
-              v-model="userInfo.username" />
-          </div>
+      <ElementInputAndLabel
+        class="my-2"
+        v-model="userCustomer.Customer.address"
+        label="Adress"
+        type="text"
+      ></ElementInputAndLabel>
 
-          <div class="col-span-3 flex justify-center items-center">
-            <label for="first-name">{{ $t("firstName") }}</label>
-          </div>
-          <div class="col-span-9">
-            <input
-              type="text"
-              placeholder="Förnman"
-              v-model="userInfo.first_name"
-              class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral" />
-          </div>
+      <ElementInputAndLabel
+        class="my-2"
+        v-model="userCustomer.Customer.postal_code"
+        label="Adress"
+        type="text"
+      ></ElementInputAndLabel>
 
-          <div class="col-span-3 flex justify-center items-center">
-            <label for="last-name">{{ $t("lastName") }}</label>
-          </div>
+      <ElementInputAndLabel
+        class="my-2"
+        v-model="userCustomer.Customer.phone"
+        label="Telefonummer"
+        type="text"
+      ></ElementInputAndLabel>
 
-          <div class="col-span-9">
-            <input
-              type="text"
-              :placeholder="t('lastName')"
-              v-model="userInfo.last_name"
-              class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral" />
-          </div> -->
-      </div>
+      <ElementInputAndLabel
+        class="my-2"
+        v-if="userCustomer.Customer.type == 'Business'"
+        v-model="userCustomer.Customer.organization_number"
+        label="Organisationsnummer"
+        type="text"
+      ></ElementInputAndLabel>
+    </div>
+
+    <div v-if="userCustomer?.User">
+      <h4>Personlig information</h4>
+      <ElementInputAndLabel
+        class="my-2"
+        v-model="userCustomer.User.first_name"
+        label="Förnamn"
+        type="text"
+      ></ElementInputAndLabel>
+      <ElementInputAndLabel
+        class="my-2"
+        v-model="userCustomer.User.last_name"
+        label="Efternamn"
+        type="text"
+      ></ElementInputAndLabel>
+      <ElementInputAndLabel
+        class="my-2"
+        v-model="userCustomer.User.address"
+        label="Adress"
+        type="text"
+      ></ElementInputAndLabel>
     </div>
   </section>
 </template>
 
-<script async setup>
-// const jj = ref(0);
+<script async setup lang="ts">
+import {
+  getCurrentUserCustomer,
+  type UserCustomer,
+} from "~/helpers/supabasehelper";
 
-const user = useSupabaseUser();
+const userCustomer = ref<UserCustomer>();
+
+onMounted(async () => {
+  userCustomer.value = await getCurrentUserCustomer();
+});
 </script>

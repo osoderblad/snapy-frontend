@@ -8,7 +8,6 @@
       <Form
         class="grid grid-cols-12 gap-4 max-w-2xl"
         @submit="onSubmit"
-        v-slot="{ errors }"
         :validation-schema="schema"
       >
         <!-- Type Field -->
@@ -202,32 +201,6 @@
             class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
           />
         </div>
-
-        <!-- NameSRS ID Field -->
-        <!-- <div class="col-span-3 flex justify-center items-center">NameSRS ID</div>
-      <div class="col-span-9 relative max-w-xs">
-        <Field
-          name="namesrs_id"
-          v-model="customer.namesrs_id"
-          class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-        />
-        <ErrorMessage name="namesrs_id" class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg" />
-      </div> -->
-
-        <!-- Fortnox Customer Number Field -->
-        <!-- <div class="col-span-3 flex justify-center items-center">
-        Fortnox Customer Number
-      </div>
-      <div class="col-span-9 relative max-w-xs">
-        <Field
-          name="fortnox_customer_number"
-          v-model="customer.fortnox_customer_number"
-          class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-        />
-        <ErrorMessage name="fortnox_customer_number" class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg" />
-      </div> -->
-
-        <!-- Submit Button -->
         <div class="col-span-12 flex justify-center">
           <button type="submit" class="btn btn-primary mt-4">
             Slutför registrering
@@ -245,6 +218,7 @@ import * as yup from "yup";
 const { notify } = useNotifier();
 const accountCompleted = useState("accountCompleted");
 const customer = ref({
+  // customer_id: null,
   type: "Private",
   name: null,
   email: null,

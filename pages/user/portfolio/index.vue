@@ -43,16 +43,17 @@
 
 <script setup lang="ts">
 import type { Snapback_Order } from "~/types/snapback_orders";
-const { notify } = useNotifier();
+
 const bookedDomains = ref<Snapback_Order[]>([]);
 const loaded = ref(false);
-
 const accountCompleted = useState("accountCompleted");
 
-const { data, error } = await getBookedDomains();
+onMounted(async () => {
+  const { data, error } = await getBookedDomains();
 
-if (!error) {
-  loaded.value = true;
-  bookedDomains.value = data;
-}
+  if (!error) {
+    loaded.value = true;
+    bookedDomains.value = data;
+  }
+});
 </script>

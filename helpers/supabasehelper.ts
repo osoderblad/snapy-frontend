@@ -1,6 +1,12 @@
 import type Stripe from "stripe";
 import { useSupabaseWrapper } from "../utils/SupabaseWrapper";
 import type { IUser } from "~/server/types/IUser";
+import type {
+  Customer,
+  CustomerView,
+  UserProfiles,
+  UserProfilesView,
+} from "~/types/customer";
 
 // export async function getAllDomains(from: number, to: number) {
 //   const supabaseWrapper = useSupabaseWrapper();
@@ -29,6 +35,24 @@ export async function getCurrentUser(): Promise<IUser> {
   return data;
 }
 
+// getCurrentCustomer
+
+export async function getCurrentUserCustomer(): Promise<UserCustomer> {
+  const user = useSupabaseUser();
+  // call rpc from client get_user_and_customer_data
+  const { data, error } = await useSupabaseClient()
+    //@ts-ignore
+    .schema("public")
+    .rpc("get_user_and_customer_data", { p_user_id: user.value.id });
+
+  console.log("data", data);
+
+  if (error) {
+    throw createError({ statusMessage: error.message });
+  }
+  return data;
+}
+
 export async function GetCount() {
   const supabaseWrapper = useSupabaseWrapper();
   let query = supabaseWrapper
@@ -38,6 +62,11 @@ export async function GetCount() {
   const { count } = await query;
   return count as number;
 }
+
+export type UserCustomer = {
+  User: UserProfilesView;
+  Customer: CustomerView;
+};
 
 // Uppdaterad getAllDomains funktion för att inkludera sökning
 // export async function getAllDomains(

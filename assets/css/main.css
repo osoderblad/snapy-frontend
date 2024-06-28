@@ -129,7 +129,7 @@ strong {
   transition: opacity 0.137s ease-out, visibility 0s linear 0s;
   visibility: visible;
   opacity: 1;
-  background: linear-gradient(#08110e, #151515);
+  background: linear-gradient(#212133, #181825);
 }
 
 .input-bordered {

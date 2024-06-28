@@ -1,10 +1,29 @@
 <template>
   <div>
-    <Header />
     <ClientOnly>
+      <Header />
       <CompleteAccountBanner v-if="!accountCompleted"></CompleteAccountBanner>
       <Toast />
     </ClientOnly>
+    <div id="ftco-loader" class="fullscreen" :class="loaded ? 'hide' : ''">
+      <div
+        id="preloader"
+        style="display: flex; justify-content: center; height: 100svh"
+      >
+        <span class="opacity-20 align-middle flex">
+          <span
+            class="align-middle loading loading-ball loading-lg text-accent -right-[25px]"
+          ></span>
+          <span
+            class="align-middle loading loading-ball loading-lg text-accent"
+          ></span>
+          <span
+            class="align-middle loading loading-ball loading-lg text-accent -left-[25px]"
+          ></span>
+        </span>
+      </div>
+    </div>
+
     <div
       class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5 p-2"
     >
@@ -30,6 +49,7 @@ import {
   CreditCardIcon,
   UserIcon,
 } from "@heroicons/vue/24/solid";
+const loaded = ref(false);
 const sideNavOpen = useState("sideNavOpen", () => true);
 useState("isLoginOpen", () => false);
 const accountCompleted = useState("accountCompleted", () => true);
@@ -40,6 +60,9 @@ const CompleteAccountBanner = defineAsyncComponent(
 
 onMounted(async () => {
   accountCompleted.value = await IsAccountCompleted();
+  setTimeout(() => {
+    loaded.value = true;
+  }, 300);
 });
 
 useHead({

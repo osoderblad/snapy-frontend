@@ -54,7 +54,7 @@ export async function IsAccountCompleted() {
 }
 
 export async function GetCustomer(customer_id: number) {
-  const client = await useSupabaseClient();
+  const client = useSupabaseClient();
 
   var { data, error } = await client
     //@ts-ignore

@@ -5,7 +5,9 @@
         <div
           class="hidden lg:w-[40%] lg:flex w-full private h-auto p-4 justify-center items-center"
         >
-          <h2 class="text-3xl">
+          <h2
+            class="text-3xl bg-gradient-to-br from-orange-500 to-yellow-300 bg-clip-text text-transparent font-extrabold block"
+          >
             Låt oss konfigurera ditt nya glänsande konto ✨
           </h2>
         </div>

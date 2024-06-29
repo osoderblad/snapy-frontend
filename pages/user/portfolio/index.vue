@@ -35,7 +35,7 @@
     <div v-else>
       <h3>
         Fullfölj registreringen på
-        <NuxtLink to="/user/myaccount">Mitt konto</NuxtLink>
+        <NuxtLink to="/user/onboarding">Onboarding</NuxtLink>
       </h3>
     </div>
   </section>

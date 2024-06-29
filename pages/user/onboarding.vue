@@ -1,204 +1,6 @@
-<!-- 
-      <Form
-        class="grid grid-cols-12 gap-4 max-w-2xl private"
-        @submit="onSubmit"
-        :validation-schema="schema"
-      >
-
-        <div class="col-span-3 flex justify-center items-center">Typ</div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="type"
-            as="select"
-            v-model="customer.type"
-            class="select select-bordered w-full max-w-xs"
-            rules="required|oneOf:private,business"
-            validateOn="blur"
-          >
-            <option disabled value="">Välj en typ</option>
-            <option value="Private">Privat</option>
-            <option value="Business">Företag</option>
-          </Field>
-          <ErrorMessage
-            name="type"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div class="col-span-3 flex justify-center items-center">Namn</div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="name"
-            v-model="customer.name"
-            class="p-5 input input-neutral bg-opacity-65 w-full border-neutral"
-            rules="required"
-            validateOn="blur"
-          />
-          <ErrorMessage
-            name="name"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div class="col-span-3 flex justify-center items-center">Mejl</div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="email"
-            type="email"
-            v-model="customer.email"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-            rules="required|email"
-            validateOn="blur"
-          />
-          <ErrorMessage
-            name="email"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div class="col-span-3 flex justify-center items-center">
-          Telefonummer
-        </div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="phone"
-            v-model="customer.phone"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-            validateOn="blur"
-          />
-          <ErrorMessage
-            name="phone"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div
-          v-if="customer.type == 'Business'"
-          class="col-span-3 flex justify-center items-center"
-        >
-          Organization Number
-        </div>
-        <div
-          v-if="customer.type == 'Business'"
-          class="col-span-9 relative max-w-xs"
-        >
-          <Field
-            name="organization_number"
-            v-model="customer.organization_number"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-          />
-          <ErrorMessage
-            name="organization_number"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div
-          v-show="customer.type == 'Private'"
-          class="col-span-3 flex justify-center items-center"
-        >
-          Personnummer
-        </div>
-        <div
-          v-show="customer.type == 'Private'"
-          class="col-span-9 relative max-w-xs"
-        >
-          <Field
-            name="pin"
-            v-model="customer.pin"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-          />
-          <ErrorMessage
-            name="pin"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div class="col-span-3 flex justify-center items-center">Adress</div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="address"
-            v-model="customer.address"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-          />
-          <ErrorMessage
-            name="address"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div class="col-span-3 flex justify-center items-center">Postkod</div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="postal_code"
-            v-model="customer.postal_code"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-          />
-          <ErrorMessage
-            name="postal_code"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div class="col-span-3 flex justify-center items-center">Stad</div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="city"
-            v-model="customer.city"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-          />
-          <ErrorMessage
-            name="city"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div class="col-span-3 flex justify-center items-center">Land</div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="country"
-            v-model="customer.country"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-          />
-          <ErrorMessage
-            name="country"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-
-        <div class="col-span-12">
-          <div class="divider">Frivilliga fält</div>
-        </div>
-
-        <div class="col-span-3 flex justify-center items-center">
-          Faktura Mejl
-        </div>
-        <div class="col-span-9 relative max-w-xs">
-          <Field
-            name="invoice_email"
-            type="email"
-            v-model="customer.invoice_email"
-            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-          />
-          <ErrorMessage
-            name="invoice_email"
-            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-          />
-        </div>
-        <div class="col-span-12 flex justify-center">
-          <button type="submit" class="btn btn-primary mt-4">
-            Slutför registrering
-          </button>
-        </div>
-      </Form> -->
-
 <template>
   <section>
     <div class="w-full">
-      <!-- <div class="w-full text-center mb-7">
-        <h3>Slutför registrering</h3>
-      </div> -->
-
       <div class="flex flex-wrap">
         <div
           class="hidden lg:w-[40%] lg:flex w-full private h-auto p-4 justify-center items-center"
@@ -253,211 +55,89 @@
             </TabList>
           </TabGroup>
 
-          <Form @submit="onSubmit" :validation-schema="schemaPrivate">
-            <div class="relative">
-              <div key="1" v-if="step === 1">
-                <h3 class="text-xl text-gray-300 absolute right-0">
-                  steg 1/<span class="text-gray-500">3</span>
-                </h3>
-
-                <div class="w-full max-w-md px-2 py-16 sm:px-0">
-                  <div class="py-10">
-                    <div class="flex gap-3">
-                      <div class="relative max-w-xs">
-                        <div
-                          class="col-span-3 flex justify-center items-center"
-                        >
-                          Förnamn
-                        </div>
-                        <div class="col-span-9 relative max-w-xs">
-                          <Field
-                            name="firstName"
-                            v-model="customer.firstName"
-                            class="p-5 input input-neutral bg-opacity-65 w-full border-neutral"
-                            rules="required"
-                            validateOn="blur"
-                          />
-                          <ErrorMessage
-                            name="firstName"
-                            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                          />
-                        </div>
-                      </div>
-
-                      <div class="relative max-w-xs">
-                        <div
-                          class="col-span-3 flex justify-center items-center"
-                        >
-                          Efternamn
-                        </div>
-                        <div class="col-span-9 relative max-w-xs">
-                          <Field
-                            name="lastName"
-                            v-model="customer.lastName"
-                            class="p-5 input input-neutral bg-opacity-65 w-full border-neutral"
-                            rules="required"
-                            validateOn="blur"
-                          />
-                          <ErrorMessage
-                            name="lastName"
-                            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="relative max-w-xs mt-3">
-                      <div class="col-span-3 flex justify-center items-center">
-                        Telefonummer
-                      </div>
-                      <div class="col-span-9 relative max-w-xs">
-                        <Field
-                          name="phone"
-                          v-model="customer.phone"
-                          class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-                          validateOn="blur"
-                        />
-                        <ErrorMessage
-                          name="phone"
-                          class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                        />
-                      </div>
-                    </div>
-
-                    <div
-                      v-if="customer.type == 'Business'"
-                      class="col-span-3 flex justify-center items-center"
-                    >
-                      Org.nmr
-                    </div>
-                    <div
-                      v-if="customer.type == 'Business'"
-                      class="col-span-9 relative max-w-xs"
-                    >
-                      <Field
-                        name="organization_number"
-                        v-model="customer.organization_number"
-                        class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-                      />
-                      <ErrorMessage
-                        name="organization_number"
-                        class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                      />
-                    </div>
-
-                    <div
-                      v-show="customer.type == 'Private'"
-                      class="col-span-3 flex justify-center items-center"
-                    >
-                      Personnummer
-                    </div>
-                    <div
-                      v-show="customer.type == 'Private'"
-                      class="col-span-9 relative max-w-xs"
-                    >
-                      <Field
-                        name="pin"
-                        v-model="customer.pin"
-                        class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-                      />
-                      <ErrorMessage
-                        name="pin"
-                        class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                      />
-                    </div>
-
-                    <div class="col-span-3 flex justify-center items-center">
-                      Adress
-                    </div>
-                    <div class="col-span-9 relative max-w-xs">
-                      <Field
-                        name="address"
-                        v-model="customer.address"
-                        class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-                      />
-                      <ErrorMessage
-                        name="address"
-                        class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                      />
-                    </div>
-
-                    <div class="flex gap-3">
-                      <div class="relative max-w-xs">
-                        <div
-                          class="col-span-3 flex justify-center items-center"
-                        >
-                          Postnummer
-                        </div>
-                        <div class="col-span-9 relative max-w-xs">
-                          <Field
-                            name="postal_code"
-                            v-model="customer.postal_code"
-                            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-                          />
-                          <ErrorMessage
-                            name="postal_code"
-                            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                          />
-                        </div>
-                      </div>
-
-                      <div class="relative max-w-xs">
-                        <div
-                          class="col-span-3 flex justify-center items-center"
-                        >
-                          Stad
-                        </div>
-                        <div class="col-span-9 relative max-w-xs">
-                          <Field
-                            name="city"
-                            v-model="customer.city"
-                            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-                          />
-                          <ErrorMessage
-                            name="city"
-                            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-span-3 flex justify-center items-center">
-                      Land
-                    </div>
-                    <div class="col-span-9 relative max-w-xs">
-                      <Field
-                        name="country"
-                        disabled
-                        v-model="customer.country"
-                        class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
-                      />
-                      <ErrorMessage
-                        name="country"
-                        class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
-                      />
-                    </div>
-                  </div>
+          <Form
+            @submit="onSubmit"
+            :validation-schema="schemaPrivate"
+            class="flex flex-col"
+          >
+            <div class="w-full max-w-lg px-4 py-16">
+              <div class="space-y-6">
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                  <FormField
+                    name="firstName"
+                    label="Förnamn"
+                    :modelValue="customer.firstName"
+                    @update:modelValue="(value) => (customer.firstName = value)"
+                    rules="required"
+                    validateOn="blur"
+                  />
+                  <FormField
+                    name="lastName"
+                    label="Efternamn"
+                    :modelValue="customer.lastName"
+                    @update:modelValue="(value) => (customer.lastName = value)"
+                    rules="required"
+                    validateOn="blur"
+                  />
                 </div>
-              </div>
-              <div key="2" v-if="step === 2">
-                <h3 class="text-xl text-gray-300 absolute right-0">
-                  steg 2/<span class="text-gray-500">3</span>
-                </h3>
 
-                <span class="btn btn-sm btn-ghost mr-2" @click="step = 1"
-                  >Tillbaka</span
-                >
-                <span class="btn btn-sm btn-accent" @click="step = 3"
-                  >Nästa steg</span
-                >
-              </div>
-              <div key="3" v-if="step === 3">
-                <h3 class="text-xl text-gray-300 absolute right-0">
-                  steg 3/<span class="text-gray-500">3</span>
-                </h3>
-                <span class="btn btn-sm btn-ghost mr-2" @click="step = 2"
-                  >Tillbaka</span
-                >
-                <span class="btn btn-sm btn-accent">Slutför</span>
+                <FormField
+                  name="phone"
+                  label="Telefonnummer"
+                  :modelValue="customer.phone"
+                  @update:modelValue="(value) => (customer.phone = value)"
+                />
+
+                <div v-if="customer.type === 'Business'">
+                  <FormField
+                    name="organization_number"
+                    label="Org.nr"
+                    :modelValue="customer.organization_number"
+                    @update:modelValue="
+                      (value) => (customer.organization_number = value)
+                    "
+                  />
+                </div>
+
+                <div v-if="customer.type === 'Private'">
+                  <FormField
+                    name="pin"
+                    label="Personnummer"
+                    placeholder="ÅÅMMDD-XXXX"
+                    mask="######-####"
+                    :modelValue="customer.pin"
+                    @update:modelValue="(value) => (customer.pin = value)"
+                    :rules="{
+                      required: true,
+                      validate: validateAndExtractSwedishSSN,
+                    }"
+                  />
+                </div>
+
+                <FormField
+                  name="address"
+                  label="Adress"
+                  :modelValue="customer.address"
+                  @update:modelValue="(value) => (customer.address = value)"
+                />
+                <FormField
+                  name="postal_code"
+                  label="Postnummer"
+                  :modelValue="customer.postal_code"
+                  @update:modelValue="(value) => (customer.postal_code = value)"
+                />
+                <FormField
+                  name="city"
+                  label="Stad"
+                  :modelValue="customer.city"
+                  @update:modelValue="(value) => (customer.city = value)"
+                />
+                <FormField
+                  name="country"
+                  label="Land"
+                  :modelValue="'Sverige'"
+                  disabled
+                />
               </div>
             </div>
           </Form>
@@ -469,13 +149,11 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { Field, Form, ErrorMessage } from "vee-validate";
+import { Form } from "vee-validate";
 import * as yup from "yup";
+import { TabGroup, TabList, Tab } from "@headlessui/vue";
 const { notify } = useNotifier();
 const accountCompleted = useState("accountCompleted");
-
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
-
 const step = ref<number>(1);
 
 const customer = ref({
@@ -495,6 +173,75 @@ const customer = ref({
   // namesrs_id: null,
   // fortnox_customer_number: null,
 });
+function validateAndExtractSwedishSSN(ssn: string) {
+  const ssnPattern = /^(\d{2})(\d{2})(\d{2})-(\d{3})(\d)$/;
+  const match = ssn.match(ssnPattern);
+
+  if (!match) {
+    return { valid: false, message: "Invalid format" };
+  }
+
+  // År, månad och dag extraheras
+  const year = parseInt(match[1], 10);
+  const month = parseInt(match[2], 10);
+  const day = parseInt(match[3], 10);
+  const individualNumbers = match[4];
+  const checkDigit = parseInt(match[5], 10); // Sista siffran är kontrollsiffran
+  const genderDigit = parseInt(individualNumbers[2], 10); // Den näst sista siffran i individnumret
+
+  // Skapa ett datum för att verifiera giltigheten
+  const fullYear = year < 20 ? 2000 + year : 1900 + year;
+  const date = new Date(fullYear, month - 1, day);
+  if (
+    date.getFullYear() !== fullYear ||
+    date.getMonth() + 1 !== month ||
+    date.getDate() !== day
+  ) {
+    return { valid: false, message: "Invalid date" };
+  }
+
+  // Könsbestämning baserad på den näst sista siffran i individnumret (udda för män, jämn för kvinnor)
+  const gender = genderDigit % 2 === 0 ? "Woman" : "Man";
+
+  // Använd Luhn-algoritmen för att verifiera kontrollsiffran
+  if (!isValidLuhn(ssn.replace("-", ""))) {
+    return { valid: false, message: "Invalid control digit" };
+  }
+
+  return { valid: true, gender, year: fullYear, month, day };
+}
+
+function isValidLuhn(number: string) {
+  let sum = 0;
+  for (let i = 0; i < number.length; i++) {
+    let digit = parseInt(number[number.length - 1 - i], 10);
+    if (i % 2 === 1) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+    sum += digit;
+  }
+  return sum % 10 === 0;
+}
+
+watch(
+  () => customer.value.pin,
+  (newVal) => {
+    const result = validateAndExtractSwedishSSN(newVal);
+    if (result.valid) {
+      console.log(result);
+      //  customer.value. = result.gender;
+      //  customer.value.birthYear = result.year;
+      //  customer.value.birthMonth = result.month;
+      //  customer.value.birthDay = result.day;
+    } else {
+      // Hantera ogiltigt personnummer
+      console.error("Ogiltigt personnummer");
+    }
+  }
+);
 
 function chooseType(type: string) {
   customer.value.type = type;
@@ -513,6 +260,15 @@ watch(accountCompleted, (value) => {
   }
 });
 
+const ssnValidation = yup.string().test(
+  "is-valid-ssn",
+  "Ogiltigt personnummer", // Felmeddelande om valideringen misslyckas
+  (value) => {
+    const result = validateAndExtractSwedishSSN(value || "");
+    return result.valid; // Returnerar true eller false beroende på valideringsresultatet
+  }
+);
+
 const schemaPrivate = yup.object({
   type: yup
     .string()
@@ -525,22 +281,7 @@ const schemaPrivate = yup.object({
     .email("Invalid email address")
     .required("Mejl är obligatoriskt"),
   phone: yup.string().required(),
-
-  organization_number: yup
-    .string()
-    .when("type", (type) =>
-      type.includes("Business")
-        ? yup.string().required()
-        : yup.string().nullable().notRequired()
-    ),
-  pin: yup
-    .string()
-    .when("type", (type) =>
-      type.includes("Private")
-        ? yup.string().required()
-        : yup.string().nullable().notRequired()
-    ),
-
+  pin: ssnValidation.required("Personnummer är obligatoriskt"),
   address: yup.string().required(),
   postal_code: yup.number().required(),
   city: yup.string().required(),
@@ -569,10 +310,8 @@ async function onSubmit(values: any) {
     .select("customer_id")
     .single();
 
-  console.log(data);
   if (data) {
     // lägg till koppling till customers_users tabellen
-
     if (user && user.value) {
       var { data: cu, error } = await client
         //@ts-ignore

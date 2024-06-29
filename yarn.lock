@@ -5556,6 +5556,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"maska@npm:^3.0.0-beta4":
+  version: 3.0.0-beta4
+  resolution: "maska@npm:3.0.0-beta4"
+  checksum: 10c0/27a6fda0de0fef42ac6290b6d24d94551db1d454aa9aab32f472d0ce1946b25cfabe0ac974e77e9f938f2f1c6b69d53bf3e38f6eb1c06389d79ed408d58595ba
+  languageName: node
+  linkType: hard
+
 "mdn-data@npm:2.0.28":
   version: 2.0.28
   resolution: "mdn-data@npm:2.0.28"
@@ -6149,6 +6156,7 @@ __metadata:
     "@vueuse/core": "npm:^10.11.0"
     autoprefixer: "npm:^10.4.19"
     daisyui: "npm:^4.12.10"
+    maska: "npm:^3.0.0-beta4"
     mitt: "npm:^3.0.1"
     nuxt: "npm:^3.12.2"
     postcss: "npm:^8.4.38"

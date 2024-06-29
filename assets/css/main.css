@@ -53,7 +53,8 @@ html {
 }
 
 html[data-theme="catppuccin"] {
-  background: var(--base-700) !important;
+  /* background: var(--base-700) !important; */
+  background: linear-gradient(var(--base-700), #181825);
 }
 
 body {
@@ -129,7 +130,7 @@ strong {
   transition: opacity 0.137s ease-out, visibility 0s linear 0s;
   visibility: visible;
   opacity: 1;
-  background: linear-gradient(#212133, #181825);
+  background: linear-gradient(var(--base-700), #181825);
 }
 
 .input-bordered {

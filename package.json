@@ -28,6 +28,7 @@
     "@vee-validate/nuxt": "^4.13.1",
     "@vee-validate/yup": "^4.13.1",
     "@vueuse/core": "^10.11.0",
+    "maska": "^3.0.0-beta4",
     "stripe": "^15.12.0",
     "yup": "^1.4.0"
   }

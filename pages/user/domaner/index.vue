@@ -3,7 +3,9 @@
     <div class="w-full m-auto">
       <h3>Domäner</h3>
 
-      <TableView :class="!accountCompleted && 'disabled'"></TableView>
+      <ClientOnly>
+        <TableView :class="!accountCompleted && 'disabled'"></TableView>
+      </ClientOnly>
     </div>
   </section>
 </template>

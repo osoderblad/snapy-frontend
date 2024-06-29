@@ -89,7 +89,6 @@ import type {
 import { useScroll, watchDebounced } from "@vueuse/core";
 
 import { ref, onMounted } from "vue";
-import type { Snapback_Order } from "~/types/snapback_orders";
 const modelIsOpen = ref(false);
 const selectedItem = ref<CombinedDomainInfoModal | null>(null);
 const columns = DomainColumns;
@@ -125,8 +124,8 @@ async function updatePage(page) {
   isBusy.value = false;
 }
 
-async function openModal(item: CombinedDomainInfoModal) {
-  item.isBooked = await IsBooked(item.id);
+async function openModal(item: any) {
+  // item.isBooked = await IsBooked(item.id);
   selectedItem.value = item;
   modelIsOpen.value = true;
 }
@@ -134,19 +133,6 @@ async function openModal(item: CombinedDomainInfoModal) {
 function closeModal() {
   modelIsOpen.value = false;
   selectedItem.value = null;
-}
-
-async function IsBooked(id: bigint) {
-  const supabasewrapper = useSupabaseWrapper();
-
-  const { data } = await supabasewrapper
-    .select<Snapback_Order[]>("snapback_orders", "*")
-    .eq("domain_id", id);
-
-  if (data && data.length > 0) {
-    return true;
-  }
-  return false;
 }
 
 onMounted(async () => {

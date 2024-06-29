@@ -29,56 +29,64 @@
             <DialogPanel
               class="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#181825] p-6 text-left align-middle shadow-xl transition-all border-2 border-[#6236A7] border-opacity-40"
             >
-              <div v-if="!item.isBooked">
-                <DialogTitle as="span" class="text-lg font-medium leading-6"
-                  >Vill du boka <strong>{{ item.name }}</strong
-                  >?
-                </DialogTitle>
-                <div class="mt-2">
-                  <p class="text-sm">
-                    {{ item.info_created_at }}
-                  </p>
-                </div>
-
-                <div class="bg-[#ba3742] text-red-100 rounded-lg p-3">
-                  <h4 class="mb-1 mt-0 text-lg">Tänk på</h4>
-                  <ul class="list-disc ml-5 text-sm">
-                    <li>Det är bindande att boka en domän</li>
-                    <li>Domänen kan inte avbokas</li>
-                    <li>Domänen kan inte bytas</li>
-                    <li>Domänen kan inte återbetalas</li>
-                  </ul>
-                </div>
-
-                <div class="form-control w-fit my-2">
-                  <label class="label cursor-pointer">
-                    <input
-                      type="checkbox"
-                      v-model="consent"
-                      class="checkbox mr-3"
-                    />
-                    <span class="label-text"
-                      >Jag godkänner, och är införstående och våra
-                      tjänstevillkor.</span
-                    >
-                  </label>
-                </div>
-                <div class="mt-4">
-                  <button
-                    type="button"
-                    :disabled="!consent"
-                    class="inline-flex justify-center rounded-full border border-transparent text-white bg-[#5F2DA5] px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                    @click="bookIt()"
-                  >
-                    Ja, boka nu!
-                  </button>
+              <div v-if="!loaded">
+                <div class="flex items-center justify-center">
+                  <span class="loading loading-spinner"></span>
                 </div>
               </div>
 
-              <div v-if="item.isBooked">
-                <DialogTitle as="span" class="text-lg font-medium leading-6"
-                  >Tyvärr, <strong>{{ item.name }}</strong> är redan bokad
-                </DialogTitle>
+              <div v-if="loaded">
+                <div v-if="!isBooked">
+                  <DialogTitle as="span" class="text-lg font-medium leading-6"
+                    >Vill du boka <strong>{{ item.name }}</strong
+                    >?
+                  </DialogTitle>
+                  <div class="mt-2">
+                    <p class="text-sm">
+                      {{ item.info_created_at }}
+                    </p>
+                  </div>
+
+                  <div class="bg-[#ba3742] text-red-100 rounded-lg p-3">
+                    <h4 class="mb-1 mt-0 text-lg">Tänk på</h4>
+                    <ul class="list-disc ml-5 text-sm">
+                      <li>Det är bindande att boka en domän</li>
+                      <li>Domänen kan inte avbokas</li>
+                      <li>Domänen kan inte bytas</li>
+                      <li>Domänen kan inte återbetalas</li>
+                    </ul>
+                  </div>
+
+                  <div class="form-control w-fit my-2">
+                    <label class="label cursor-pointer">
+                      <input
+                        type="checkbox"
+                        v-model="consent"
+                        class="checkbox mr-3"
+                      />
+                      <span class="label-text"
+                        >Jag godkänner, och är införstående och våra
+                        tjänstevillkor.</span
+                      >
+                    </label>
+                  </div>
+                  <div class="mt-4">
+                    <button
+                      type="button"
+                      :disabled="!consent"
+                      class="inline-flex justify-center rounded-full border border-transparent text-white bg-[#5F2DA5] px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      @click="bookIt()"
+                    >
+                      Ja, boka nu!
+                    </button>
+                  </div>
+                </div>
+
+                <div v-if="isBooked">
+                  <DialogTitle as="span" class="text-lg font-medium leading-6"
+                    >Tyvärr, <strong>{{ item.name }}</strong> är redan bokad
+                  </DialogTitle>
+                </div>
               </div>
             </DialogPanel>
           </TransitionChild>
@@ -105,16 +113,33 @@ const props = defineProps<{
   item: CombinedDomainInfoModal;
 }>();
 const client = useSupabaseWrapper();
-
+const isBooked = ref(false);
 const consent = ref(false);
+const loaded = ref(false);
 
-// CheckAvailability
-// await CheckAvailability();
+onMounted(async () => {
+  isBooked.value = await IsBooked(props.item.id);
+  loaded.value = true;
+});
 
 function close() {
   consent.value = false;
   emit("close");
 }
+
+async function IsBooked(id: bigint) {
+  const supabasewrapper = useSupabaseWrapper();
+
+  const { data } = await supabasewrapper
+    .select<Snapback_Order[]>("snapback_orders", "*")
+    .eq("domain_id", id);
+
+  if (data && data.length > 0) {
+    return true;
+  }
+  return false;
+}
+
 const bookIt = async () => {
   const user_id = await getCustomerIdByUserId();
 

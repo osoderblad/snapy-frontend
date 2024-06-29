@@ -299,7 +299,6 @@ function mapCustomerToValuesPrivate(email: string) {
     name: `${cus.firstName} ${cus.lastName}`,
     email: email,
     phone: cus.phone,
-    organization_number: cus.organization_number,
     pin: cus.pin,
     address: cus.address,
     postal_code: cus.postal_code,

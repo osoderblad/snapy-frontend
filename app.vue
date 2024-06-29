@@ -51,14 +51,22 @@ const CompleteAccountBanner = defineAsyncComponent(
   () => import("~/asyncComponents/completeAccountBanner.vue")
 );
 const loaded = ref(false);
-const sideNavOpen = useState("sideNavOpen", () => true);
-useState("isLoginOpen", () => false);
+// const sideNavOpen = useState("sideNavOpen", () => true);
+// useState("isLoginOpen", () => false);
 const accountCompleted = useState("accountCompleted", () => true);
-const client = useSupabaseClient();
+// const client = useSupabaseClient();
 
 onMounted(async () => {
-  accountCompleted.value = await IsAccountCompleted();
-  setTimeout(() => {
+  // const client = useSupabaseClient();
+  // //listens on supabase auth state changes
+  // client.auth.onAuthStateChange(async (event) => {
+  //   if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+  //     accountCompleted.value = await IsAccountCompleted();
+  //   }
+  // });
+
+  setTimeout(async () => {
+    accountCompleted.value = await IsAccountCompleted();
     loaded.value = true;
   }, 300);
 });
@@ -67,13 +75,6 @@ useHead({
   htmlAttrs: {
     "data-theme": "catppuccin",
   },
-});
-
-//listens on supabase auth state changes
-client.auth.onAuthStateChange(async (event) => {
-  if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-    accountCompleted.value = await IsAccountCompleted();
-  }
 });
 
 useSeoMeta({

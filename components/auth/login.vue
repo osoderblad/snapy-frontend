@@ -58,6 +58,8 @@
 <script setup lang="ts">
 const { notify } = useNotifier();
 const client = useSupabaseClient();
+const accountCompleted = useState("accountCompleted");
+
 const userForm = ref({
   email: "",
   password: "",
@@ -91,6 +93,12 @@ const login = async () => {
     navigateTo("/user/domaner");
 
     client.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        IsAccountCompleted().then((res) => {
+          accountCompleted.value = res;
+        });
+      }
+
       if (event === "SIGNED_OUT") {
         navigateTo("/login");
       }

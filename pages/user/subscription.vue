@@ -1,7 +1,7 @@
 <template>
   <section>
     <h2>Prenumerationer</h2>
-    <template v-show="loaded">
+    <template v-if="loaded">
       <SubModule v-if="!sub"></SubModule>
       <SubHelper
         v-if="sub"

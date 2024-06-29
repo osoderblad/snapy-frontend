@@ -53,9 +53,9 @@ function logout() {
   >
     <div class="">
       <h1 class="btn btn-ghost text-2xl md:text-3xl font-medium gap-0 mb-0">
-        <a class="no-underline" href="/">
+        <NuxtLink class="no-underline" to="/">
           Snapy<span class="text-[#64649E]">.se</span>
-        </a>
+        </NuxtLink>
       </h1>
     </div>
     <div class="links">
@@ -81,7 +81,7 @@ function logout() {
           tabindex="0"
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow links links-side"
         >
-          <li v-for="link in userLinks">
+          <li v-for="link in userLinks" class="mb-1">
             <NuxtLink :to="link.to" v-text="link.label" />
           </li>
           <li>

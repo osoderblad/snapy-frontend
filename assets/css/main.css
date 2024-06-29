@@ -537,3 +537,7 @@ html[data-theme="catppuccin"]
 html[data-theme="catppuccin"] .links a {
   color: #eadbff;
 }
+
+header {
+  user-select: none;
+}

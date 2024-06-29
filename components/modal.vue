@@ -65,7 +65,7 @@
                         class="checkbox mr-3"
                       />
                       <span class="label-text"
-                        >Jag godkänner, och är införstående och våra
+                        >Jag godkänner, och är införstående om våra
                         tjänstevillkor.</span
                       >
                     </label>
@@ -86,6 +86,16 @@
                   <DialogTitle as="span" class="text-lg font-medium leading-6"
                     >Tyvärr, <strong>{{ item.name }}</strong> är redan bokad
                   </DialogTitle>
+                  <div class="mt-4">
+                    <button
+                      type="button"
+                      focusable
+                      class="inline-flex justify-center rounded-full border border-transparent text-white bg-[#5F2DA5] px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      @click="close()"
+                    >
+                      Ok
+                    </button>
+                  </div>
                 </div>
               </div>
             </DialogPanel>

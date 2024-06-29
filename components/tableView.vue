@@ -2,13 +2,14 @@
   <div>
     <span>Visar: {{ count }} av {{ totalItems }}</span>
 
-    <Modal
-      :isOpen="modelIsOpen"
-      @close="modelIsOpen = false"
-      :item="selectedItem"
-      v-if="selectedItem"
-    ></Modal>
-
+    <ClientOnly>
+      <Modal
+        :isOpen="modelIsOpen"
+        @close="closeModal()"
+        :item="selectedItem"
+        v-if="selectedItem"
+      ></Modal>
+    </ClientOnly>
     <span class="opacity-10 mx-2 text-sm">i vy: {{ domains.length }}</span>
     <div class="flex px-3 py-3.5 pl-0">
       <input
@@ -81,12 +82,16 @@
 <script setup lang="ts">
 import { getAllDomains, GetCount } from "~/helpers/supabasehelper";
 import { DomainColumns } from "~/helpers/domains/domainhelper";
-import type { CombinedDomainInfo } from "~/types/bardate_domains";
+import type {
+  CombinedDomainInfo,
+  CombinedDomainInfoModal,
+} from "~/types/bardate_domains";
 import { useScroll, watchDebounced } from "@vueuse/core";
 
 import { ref, onMounted } from "vue";
+import type { Snapback_Order } from "~/types/snapback_orders";
 const modelIsOpen = ref(false);
-const selectedItem = ref<CombinedDomainInfo | null>(null);
+const selectedItem = ref<CombinedDomainInfoModal | null>(null);
 const columns = DomainColumns;
 const isBusy = ref(false);
 const el = ref(null);
@@ -120,14 +125,28 @@ async function updatePage(page) {
   isBusy.value = false;
 }
 
-function openModal(item: any) {
+async function openModal(item: CombinedDomainInfoModal) {
+  item.isBooked = await IsBooked(item.id);
   selectedItem.value = item;
   modelIsOpen.value = true;
 }
 
-function calculateCurrentPage(totalItems, currentIndex) {
-  const itemsPerPage = pageSize;
-  return Math.ceil((currentIndex + 1) / itemsPerPage);
+function closeModal() {
+  modelIsOpen.value = false;
+  selectedItem.value = null;
+}
+
+async function IsBooked(id: bigint) {
+  const supabasewrapper = useSupabaseWrapper();
+
+  const { data } = await supabasewrapper
+    .select<Snapback_Order[]>("snapback_orders", "*")
+    .eq("domain_id", id);
+
+  if (data && data.length > 0) {
+    return true;
+  }
+  return false;
 }
 
 onMounted(async () => {

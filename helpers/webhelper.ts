@@ -47,3 +47,25 @@ export async function postToApi(endpoint: string, bodyData: Object) {
     console.error("Error in API call:", error);
   }
 }
+
+
+export async function GetToApi(endpoint: string) {
+  try {
+    const apiUrl = "/api/";
+    const response = await fetch(apiUrl + endpoint, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json(); // Anta att svaret är i JSON-format
+    return data;
+  } catch (error) {
+    console.error("Error in API call:", error);
+  }
+}

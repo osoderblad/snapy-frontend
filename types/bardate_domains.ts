@@ -31,7 +31,10 @@ export type CombinedDomainInfo = {
   ttl: Date;
   info_created_at: Date;
   url_length: number;
-  available: boolean;
   cctld: string;
   days_until_release: number;
+};
+
+export type CombinedDomainInfoModal = CombinedDomainInfo & {
+  isBooked: boolean;
 };

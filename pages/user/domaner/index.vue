@@ -10,9 +10,6 @@
 
 <script async setup lang="ts">
 const accountCompleted = useState("accountCompleted");
-const TableView = defineAsyncComponent(
-  () => import("~/asyncComponents/tableView.vue")
-);
 useSeoMeta({
   title: "Domäner",
   description: "Snapbacks by Snapy",

@@ -6,7 +6,7 @@ class StripeSingleton {
 
   public static getInstance(): Stripe {
     if (!StripeSingleton.instance) {
-      var key = useRuntimeConfig().public.stripeSectretKey;
+      var key = useRuntimeConfig().private.stripeSectretKey;
       StripeSingleton.instance = new Stripe(key, {
         apiVersion: "2024-04-10",
       });

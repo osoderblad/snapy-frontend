@@ -27,7 +27,7 @@
     <div
       class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5 p-2"
     >
-      <aside class="lg:col-span-2 sidenav" v-if="sideNavOpen">
+      <aside class="lg:col-span-2 sidenav" v-show="sideNavOpen">
         <SideNav
           class="p-2 lg:my-2 my-4 dark:bg-[#181825] rounded-lg"
           :links="links"
@@ -49,14 +49,14 @@ import {
   CreditCardIcon,
   UserIcon,
 } from "@heroicons/vue/24/solid";
+const CompleteAccountBanner = defineAsyncComponent(
+  () => import("~/asyncComponents/completeAccountBanner.vue")
+);
 const loaded = ref(false);
 const sideNavOpen = useState("sideNavOpen", () => true);
 useState("isLoginOpen", () => false);
 const accountCompleted = useState("accountCompleted", () => true);
 const client = useSupabaseClient();
-const CompleteAccountBanner = defineAsyncComponent(
-  () => import("~/asyncComponents/completeAccountBanner.vue")
-);
 
 onMounted(async () => {
   accountCompleted.value = await IsAccountCompleted();

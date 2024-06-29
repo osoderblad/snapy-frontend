@@ -29,48 +29,56 @@
             <DialogPanel
               class="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#181825] p-6 text-left align-middle shadow-xl transition-all border-2 border-[#6236A7] border-opacity-40"
             >
-              <DialogTitle as="span" class="text-lg font-medium leading-6"
-                >Vill du boka <strong>{{ item.name }}</strong
-                >?
-              </DialogTitle>
-              <div class="mt-2">
-                <p class="text-sm">
-                  {{ item.info_created_at }}
-                </p>
-              </div>
+              <div v-if="!item.isBooked">
+                <DialogTitle as="span" class="text-lg font-medium leading-6"
+                  >Vill du boka <strong>{{ item.name }}</strong
+                  >?
+                </DialogTitle>
+                <div class="mt-2">
+                  <p class="text-sm">
+                    {{ item.info_created_at }}
+                  </p>
+                </div>
 
-              <div class="bg-[#ba3742] text-red-100 rounded-lg p-3">
-                <h4 class="mb-1 mt-0 text-lg">Tänk på</h4>
-                <ul class="list-disc ml-5 text-sm">
-                  <li>Det är bindande att boka en domän</li>
-                  <li>Domänen kan inte avbokas</li>
-                  <li>Domänen kan inte bytas</li>
-                  <li>Domänen kan inte återbetalas</li>
-                </ul>
-              </div>
+                <div class="bg-[#ba3742] text-red-100 rounded-lg p-3">
+                  <h4 class="mb-1 mt-0 text-lg">Tänk på</h4>
+                  <ul class="list-disc ml-5 text-sm">
+                    <li>Det är bindande att boka en domän</li>
+                    <li>Domänen kan inte avbokas</li>
+                    <li>Domänen kan inte bytas</li>
+                    <li>Domänen kan inte återbetalas</li>
+                  </ul>
+                </div>
 
-              <div class="form-control w-fit my-2">
-                <label class="label cursor-pointer">
-                  <input
-                    type="checkbox"
-                    v-model="consent"
-                    class="checkbox mr-3"
-                  />
-                  <span class="label-text"
-                    >Jag godkänner, och är införstående och våra
-                    tjänstevillkor.</span
+                <div class="form-control w-fit my-2">
+                  <label class="label cursor-pointer">
+                    <input
+                      type="checkbox"
+                      v-model="consent"
+                      class="checkbox mr-3"
+                    />
+                    <span class="label-text"
+                      >Jag godkänner, och är införstående och våra
+                      tjänstevillkor.</span
+                    >
+                  </label>
+                </div>
+                <div class="mt-4">
+                  <button
+                    type="button"
+                    :disabled="!consent"
+                    class="inline-flex justify-center rounded-full border border-transparent text-white bg-[#5F2DA5] px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    @click="bookIt()"
                   >
-                </label>
+                    Ja, boka nu!
+                  </button>
+                </div>
               </div>
-              <div class="mt-4">
-                <button
-                  type="button"
-                  :disabled="!consent"
-                  class="inline-flex justify-center rounded-full border border-transparent text-white bg-[#5F2DA5] px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  @click="bookIt()"
-                >
-                  Ja, boka nu!
-                </button>
+
+              <div v-if="item.isBooked">
+                <DialogTitle as="span" class="text-lg font-medium leading-6"
+                  >Tyvärr, <strong>{{ item.name }}</strong> är redan bokad
+                </DialogTitle>
               </div>
             </DialogPanel>
           </TransitionChild>
@@ -81,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CombinedDomainInfo } from "~/types/bardate_domains";
+import type { CombinedDomainInfoModal } from "~/types/bardate_domains";
 import {
   TransitionRoot,
   TransitionChild,
@@ -94,35 +102,14 @@ const emit = defineEmits(["close"]);
 const { notify } = useNotifier();
 const props = defineProps<{
   isOpen: boolean;
-  item: CombinedDomainInfo;
+  item: CombinedDomainInfoModal;
 }>();
 const client = useSupabaseWrapper();
-const available = ref(false);
+
 const consent = ref(false);
 
 // CheckAvailability
 // await CheckAvailability();
-
-watch(
-  () => props.isOpen,
-  async (newValue) => {
-    if (newValue && props.item) {
-      await CheckAvailability();
-    }
-  }
-);
-async function CheckAvailability() {
-  // Check if domain is available
-  // If available, set available to true
-  const client = useSupabaseWrapper();
-
-  const data = await client
-    .select<Snapback_Order[]>("snapback_orders", "*")
-    .eq("domain_id", props.item.id);
-
-  console.log(data);
-  available.value = true;
-}
 
 function close() {
   consent.value = false;

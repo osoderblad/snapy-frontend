@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   css: ["@/assets/css/main.css"],
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -12,7 +12,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
-      stripeSectretKey: process.env.STRIPE_SECTRET_KEY,
       appDomain: process.env.APP_DOMAIN,
       // SUPABASE_URL: process.env.SUPABASE_URL,
       // STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID,
@@ -46,7 +45,7 @@ export default defineNuxtConfig({
     useStylesheet: true,
   },
 
-  routeRules: {
-    "/*": { ssr: false },
-  },
+  // routeRules: {
+  //   "/*": { ssr: false },
+  // },
 });

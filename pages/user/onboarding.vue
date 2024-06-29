@@ -1,16 +1,10 @@
-<template>
-  <section class="mt-10">
-    <div class="max-w-2xl w-full">
-      <div class="w-full text-center mb-7">
-        <h3>Slutför registrering</h3>
-      </div>
-
+<!-- 
       <Form
-        class="grid grid-cols-12 gap-4 max-w-2xl"
+        class="grid grid-cols-12 gap-4 max-w-2xl private"
         @submit="onSubmit"
         :validation-schema="schema"
       >
-        <!-- Type Field -->
+
         <div class="col-span-3 flex justify-center items-center">Typ</div>
         <div class="col-span-9 relative max-w-xs">
           <Field
@@ -31,7 +25,6 @@
           />
         </div>
 
-        <!-- Name Field -->
         <div class="col-span-3 flex justify-center items-center">Namn</div>
         <div class="col-span-9 relative max-w-xs">
           <Field
@@ -47,7 +40,6 @@
           />
         </div>
 
-        <!-- Email Field -->
         <div class="col-span-3 flex justify-center items-center">Mejl</div>
         <div class="col-span-9 relative max-w-xs">
           <Field
@@ -64,7 +56,6 @@
           />
         </div>
 
-        <!-- Phone Field -->
         <div class="col-span-3 flex justify-center items-center">
           Telefonummer
         </div>
@@ -81,7 +72,6 @@
           />
         </div>
 
-        <!-- Organization Number Field -->
         <div
           v-if="customer.type == 'Business'"
           class="col-span-3 flex justify-center items-center"
@@ -103,7 +93,6 @@
           />
         </div>
 
-        <!-- PIN Field -->
         <div
           v-show="customer.type == 'Private'"
           class="col-span-3 flex justify-center items-center"
@@ -125,7 +114,6 @@
           />
         </div>
 
-        <!-- Address Field -->
         <div class="col-span-3 flex justify-center items-center">Adress</div>
         <div class="col-span-9 relative max-w-xs">
           <Field
@@ -139,7 +127,6 @@
           />
         </div>
 
-        <!-- Postal Code Field -->
         <div class="col-span-3 flex justify-center items-center">Postkod</div>
         <div class="col-span-9 relative max-w-xs">
           <Field
@@ -153,7 +140,6 @@
           />
         </div>
 
-        <!-- City Field -->
         <div class="col-span-3 flex justify-center items-center">Stad</div>
         <div class="col-span-9 relative max-w-xs">
           <Field
@@ -167,7 +153,6 @@
           />
         </div>
 
-        <!-- Country Field -->
         <div class="col-span-3 flex justify-center items-center">Land</div>
         <div class="col-span-9 relative max-w-xs">
           <Field
@@ -185,7 +170,6 @@
           <div class="divider">Frivilliga fält</div>
         </div>
 
-        <!-- Invoice Email Field -->
         <div class="col-span-3 flex justify-center items-center">
           Faktura Mejl
         </div>
@@ -206,7 +190,279 @@
             Slutför registrering
           </button>
         </div>
-      </Form>
+      </Form> -->
+
+<template>
+  <section>
+    <div class="w-full">
+      <!-- <div class="w-full text-center mb-7">
+        <h3>Slutför registrering</h3>
+      </div> -->
+
+      <div class="flex flex-wrap">
+        <div
+          class="hidden lg:w-[40%] lg:flex w-full private h-auto p-4 justify-center items-center"
+        >
+          <h2 class="text-3xl">
+            Låt oss konfigurera ditt nya glänsande konto ✨
+          </h2>
+        </div>
+
+        <div
+          class="lg:w-[60%] w-full private h-auto p-4 justify-center items-start"
+        >
+          <h3 class="w-full">Berätta för oss om dig själv</h3>
+          <TabGroup>
+            <TabList
+              class="flex space-x-1 rounded-xl bg-blue-900/20 p-1 max-w-md"
+            >
+              <Tab
+                as="template"
+                v-slot="{ selected }"
+                @click="chooseType('Private')"
+              >
+                <span
+                  :class="[
+                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                    'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                    selected
+                      ? 'bg-white text-blue-700 shadow'
+                      : 'text-blue-100 hover:bg-white/[0.12] hover:text-white',
+                  ]"
+                >
+                  Privatperson
+                </span>
+              </Tab>
+              <Tab
+                as="template"
+                v-slot="{ selected }"
+                @click="chooseType('Business')"
+              >
+                <span
+                  :class="[
+                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                    'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                    selected
+                      ? 'bg-white text-blue-700 shadow'
+                      : 'text-blue-100 hover:bg-white/[0.12] hover:text-white',
+                  ]"
+                >
+                  Företag
+                </span>
+              </Tab>
+            </TabList>
+          </TabGroup>
+
+          <Form @submit="onSubmit" :validation-schema="schemaPrivate">
+            <div class="relative">
+              <div key="1" v-if="step === 1">
+                <h3 class="text-xl text-gray-300 absolute right-0">
+                  steg 1/<span class="text-gray-500">3</span>
+                </h3>
+
+                <div class="w-full max-w-md px-2 py-16 sm:px-0">
+                  <div class="py-10">
+                    <div class="flex gap-3">
+                      <div class="relative max-w-xs">
+                        <div
+                          class="col-span-3 flex justify-center items-center"
+                        >
+                          Förnamn
+                        </div>
+                        <div class="col-span-9 relative max-w-xs">
+                          <Field
+                            name="firstName"
+                            v-model="customer.firstName"
+                            class="p-5 input input-neutral bg-opacity-65 w-full border-neutral"
+                            rules="required"
+                            validateOn="blur"
+                          />
+                          <ErrorMessage
+                            name="firstName"
+                            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="relative max-w-xs">
+                        <div
+                          class="col-span-3 flex justify-center items-center"
+                        >
+                          Efternamn
+                        </div>
+                        <div class="col-span-9 relative max-w-xs">
+                          <Field
+                            name="lastName"
+                            v-model="customer.lastName"
+                            class="p-5 input input-neutral bg-opacity-65 w-full border-neutral"
+                            rules="required"
+                            validateOn="blur"
+                          />
+                          <ErrorMessage
+                            name="lastName"
+                            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="relative max-w-xs mt-3">
+                      <div class="col-span-3 flex justify-center items-center">
+                        Telefonummer
+                      </div>
+                      <div class="col-span-9 relative max-w-xs">
+                        <Field
+                          name="phone"
+                          v-model="customer.phone"
+                          class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
+                          validateOn="blur"
+                        />
+                        <ErrorMessage
+                          name="phone"
+                          class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                        />
+                      </div>
+                    </div>
+
+                    <div
+                      v-if="customer.type == 'Business'"
+                      class="col-span-3 flex justify-center items-center"
+                    >
+                      Org.nmr
+                    </div>
+                    <div
+                      v-if="customer.type == 'Business'"
+                      class="col-span-9 relative max-w-xs"
+                    >
+                      <Field
+                        name="organization_number"
+                        v-model="customer.organization_number"
+                        class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
+                      />
+                      <ErrorMessage
+                        name="organization_number"
+                        class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                      />
+                    </div>
+
+                    <div
+                      v-show="customer.type == 'Private'"
+                      class="col-span-3 flex justify-center items-center"
+                    >
+                      Personnummer
+                    </div>
+                    <div
+                      v-show="customer.type == 'Private'"
+                      class="col-span-9 relative max-w-xs"
+                    >
+                      <Field
+                        name="pin"
+                        v-model="customer.pin"
+                        class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
+                      />
+                      <ErrorMessage
+                        name="pin"
+                        class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                      />
+                    </div>
+
+                    <div class="col-span-3 flex justify-center items-center">
+                      Adress
+                    </div>
+                    <div class="col-span-9 relative max-w-xs">
+                      <Field
+                        name="address"
+                        v-model="customer.address"
+                        class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
+                      />
+                      <ErrorMessage
+                        name="address"
+                        class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                      />
+                    </div>
+
+                    <div class="flex gap-3">
+                      <div class="relative max-w-xs">
+                        <div
+                          class="col-span-3 flex justify-center items-center"
+                        >
+                          Postnummer
+                        </div>
+                        <div class="col-span-9 relative max-w-xs">
+                          <Field
+                            name="postal_code"
+                            v-model="customer.postal_code"
+                            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
+                          />
+                          <ErrorMessage
+                            name="postal_code"
+                            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="relative max-w-xs">
+                        <div
+                          class="col-span-3 flex justify-center items-center"
+                        >
+                          Stad
+                        </div>
+                        <div class="col-span-9 relative max-w-xs">
+                          <Field
+                            name="city"
+                            v-model="customer.city"
+                            class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
+                          />
+                          <ErrorMessage
+                            name="city"
+                            class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-span-3 flex justify-center items-center">
+                      Land
+                    </div>
+                    <div class="col-span-9 relative max-w-xs">
+                      <Field
+                        name="country"
+                        disabled
+                        v-model="customer.country"
+                        class="p-5 input input-neutral bg-opacity-65 w-full max-w-xs border-neutral"
+                      />
+                      <ErrorMessage
+                        name="country"
+                        class="text-red-900 absolute top-0 -right-2 text-xs bg-red-100 font-extrabold p-1 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div key="2" v-if="step === 2">
+                <h3 class="text-xl text-gray-300 absolute right-0">
+                  steg 2/<span class="text-gray-500">3</span>
+                </h3>
+
+                <span class="btn btn-sm btn-ghost mr-2" @click="step = 1"
+                  >Tillbaka</span
+                >
+                <span class="btn btn-sm btn-accent" @click="step = 3"
+                  >Nästa steg</span
+                >
+              </div>
+              <div key="3" v-if="step === 3">
+                <h3 class="text-xl text-gray-300 absolute right-0">
+                  steg 3/<span class="text-gray-500">3</span>
+                </h3>
+                <span class="btn btn-sm btn-ghost mr-2" @click="step = 2"
+                  >Tillbaka</span
+                >
+                <span class="btn btn-sm btn-accent">Slutför</span>
+              </div>
+            </div>
+          </Form>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -217,22 +473,33 @@ import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { notify } = useNotifier();
 const accountCompleted = useState("accountCompleted");
+
+import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
+
+const step = ref<number>(1);
+
 const customer = ref({
   // customer_id: null,
   type: "Private",
-  name: null,
-  email: null,
-  phone: null,
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
   organization_number: "",
   pin: "",
-  address: null,
-  postal_code: null,
-  city: null,
-  country: null,
-  invoice_email: null,
+  address: "",
+  postal_code: "",
+  city: "",
+  country: "Sverige",
+  invoice_email: "",
   // namesrs_id: null,
   // fortnox_customer_number: null,
 });
+
+function chooseType(type: string) {
+  customer.value.type = type;
+  // step.value = 2;
+}
 
 onMounted(() => {
   if (accountCompleted.value) {
@@ -246,12 +513,13 @@ watch(accountCompleted, (value) => {
   }
 });
 
-const schema = yup.object({
+const schemaPrivate = yup.object({
   type: yup
     .string()
     .required("Typ är obligatorisk")
     .oneOf(["Private", "Business"], "Invalid customer type"),
-  name: yup.string().required("Namn är obligatoriskt"),
+  firstName: yup.string().required("Förnamn är obligatoriskt"),
+  lastName: yup.string().required("Efternamn är obligatoriskt"),
   email: yup
     .string()
     .email("Invalid email address")

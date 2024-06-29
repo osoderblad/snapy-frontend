@@ -541,3 +541,10 @@ html[data-theme="catppuccin"] .links a {
 header {
   user-select: none;
 }
+
+@media screen and (max-width: 768px) {
+  section {
+    padding: 70px 15px;
+    padding-top: 90px;
+  }
+}

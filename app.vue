@@ -1,8 +1,9 @@
 <template>
   <div>
     <ClientOnly>
-      <Header :links="links" />
       <CompleteAccountBanner v-if="!accountCompleted"></CompleteAccountBanner>
+      <Header :links="links" />
+
       <Toast />
     </ClientOnly>
     <div id="ftco-loader" class="fullscreen" :class="loaded ? 'hide' : ''">
@@ -25,12 +26,6 @@
     </div>
 
     <div class="container-app">
-      <!-- <aside class="lg:col-span-2 sidenav" v-show="sideNavOpen">
-        <SideNav
-          class="p-2 lg:my-2 my-4 dark:bg-[#181825] rounded-lg"
-          :links="links"
-        />
-      </aside> -->
       <div class="lg:col-span-8">
         <NuxtLoadingIndicator :height="4" :throttle="400" />
         <NuxtPage />
@@ -57,13 +52,15 @@ const accountCompleted = useState("accountCompleted", () => true);
 // const client = useSupabaseClient();
 
 onMounted(async () => {
-  // const client = useSupabaseClient();
-  // //listens on supabase auth state changes
-  // client.auth.onAuthStateChange(async (event) => {
-  //   if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-  //     accountCompleted.value = await IsAccountCompleted();
-  //   }
-  // });
+  const client = useSupabaseClient();
+  //listens on supabase auth state changes
+  client.auth.onAuthStateChange((event) => {
+    if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+      IsAccountCompleted().then((res) => {
+        accountCompleted.value = res;
+      });
+    }
+  });
 
   setTimeout(async () => {
     accountCompleted.value = await IsAccountCompleted();

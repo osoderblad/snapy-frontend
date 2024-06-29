@@ -4,7 +4,7 @@
     :validation-schema="schemaPrivate"
     class="flex flex-col"
   >
-    <div class="w-full max-w-lg px-4 py-16">
+    <div class="w-full max-w-lg px-4 py-10">
       <h4>Privatkund</h4>
       <div class="space-y-6">
         <div class="flex flex-col md:flex-row gap-4">

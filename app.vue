@@ -1,7 +1,7 @@
 <template>
   <div>
     <ClientOnly>
-      <Header />
+      <Header :links="links" />
       <CompleteAccountBanner v-if="!accountCompleted"></CompleteAccountBanner>
       <Toast />
     </ClientOnly>
@@ -24,15 +24,13 @@
       </div>
     </div>
 
-    <div
-      class="container-app flex flex-col lg:grid lg:grid-cols-10 lg:gap-5 p-2"
-    >
-      <aside class="lg:col-span-2 sidenav" v-show="sideNavOpen">
+    <div class="container-app">
+      <!-- <aside class="lg:col-span-2 sidenav" v-show="sideNavOpen">
         <SideNav
           class="p-2 lg:my-2 my-4 dark:bg-[#181825] rounded-lg"
           :links="links"
         />
-      </aside>
+      </aside> -->
       <div class="lg:col-span-8">
         <NuxtLoadingIndicator :height="4" :throttle="400" />
         <NuxtPage />
@@ -88,26 +86,36 @@ const links = [
     label: "Start",
     icon: HomeIcon,
     to: "/",
+    profileMenu: false,
+    needLoggedIn: false,
   },
   {
     label: "Domäner",
     icon: LinkIcon,
     to: "/user/domaner",
+    profileMenu: false,
+    needLoggedIn: false,
   },
   {
     label: "Bokade domäner",
     icon: BriefcaseIcon,
     to: "/user/portfolio",
+    profileMenu: false,
+    needLoggedIn: true,
   },
   {
     label: "Mitt Konto",
     icon: UserIcon,
     to: "/user/myaccount",
+    profileMenu: true,
+    needLoggedIn: true,
   },
   {
     label: "Prenumeration",
     icon: CreditCardIcon,
     to: "/user/subscription",
+    profileMenu: true,
+    needLoggedIn: true,
   },
 ];
 </script>

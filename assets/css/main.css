@@ -420,18 +420,17 @@ p {
     background-position: 100% 50%;
   }
 }
-
+aside {
+  padding-top: 3.5rem;
+}
 /* nytt */
 section {
-  padding: 15px 20px;
-
+  padding: 70px 30px;
+  padding-top: 90px;
   min-height: 100vh;
-  /* max-width: 1280px; */
+  max-width: 1300px;
   width: 100%;
-  margin: auto;
-  overflow: auto;
-
-  margin-bottom: 8rem;
+  margin: 0 auto;
 }
 
 .page-enter-active,
@@ -522,4 +521,19 @@ a.router-link-active.router-link-exact-active.flex {
 :disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+html[data-theme="catppuccin"]
+  .links
+  a.router-link-active.router-link-exact-active {
+  color: #b781ff;
+  border-bottom: 1px solid #b781ff;
+}
+
+.links-side a {
+  border: none !important;
+}
+
+html[data-theme="catppuccin"] .links a {
+  color: #eadbff;
 }

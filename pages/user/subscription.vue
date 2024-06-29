@@ -1,13 +1,14 @@
 <template>
   <section>
-    <div v-show="loaded">
+    <h2>Prenumerationer</h2>
+    <template v-show="loaded">
       <SubModule v-if="!sub"></SubModule>
-      <div v-if="sub">
-        <div class="text-center my-2">
-          <SubHelper :subscription="sub"></SubHelper>
-        </div>
-      </div>
-    </div>
+      <SubHelper
+        v-if="sub"
+        class="text-center my-2"
+        :subscription="sub"
+      ></SubHelper>
+    </template>
   </section>
 </template>
 

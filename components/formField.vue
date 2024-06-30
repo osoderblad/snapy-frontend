@@ -5,14 +5,13 @@
     }}</label>
     <Field
       :name="name"
-      v-maska="{ mask: mask, eager: true }"
+      v-maska="{ mask: mask }"
       :value="modelValue"
       @input="updateValue"
       :placeholder="placeholder"
       :class="inputClass"
       :rules="rules"
       :disabled="disabled"
-      :validateOn="validateOn"
     />
     <ErrorMessage
       :name="name"
@@ -24,7 +23,7 @@
 
 <script setup>
 import { vMaska } from "maska/vue";
-
+import { Field, ErrorMessage } from "vee-validate";
 const props = defineProps({
   name: String,
   placeholder: String,
@@ -36,7 +35,6 @@ const props = defineProps({
     default: "p-5 input input-neutral bg-opacity-65 w-full border-neutral",
   },
   rules: [String, Object],
-  validateOn: String,
   mask: String, // Lägg till mask prop
 });
 

@@ -247,20 +247,14 @@ async function onSubmitBusiness() {
 }
 
 type UserProfilesDto = {
-  pin: string;
+  organization_number: string;
   first_name: string;
   last_name: string;
-  birth_year: string;
-  birth_month: string;
-  email: string;
-  birth_day: string;
-  gender: "M" | "F";
-  additional_info: string;
   phone: string;
   address: string;
   city: string;
   postal_code: string;
-  country: string; // Default value: 'Sverige'
+  country: string;
 };
 
 function mapCustomerToValuesPrivate(email: string) {
@@ -268,21 +262,14 @@ function mapCustomerToValuesPrivate(email: string) {
 
   // update user profile
   const userProfile = {
-    // pin: cus.pin,
-    organization_number: cus.organization_number,
     first_name: cus.firstName,
     last_name: cus.lastName,
-    birth_year: privatePinInfo.value.year,
-    birth_month: privatePinInfo.value.month,
-    birth_day: privatePinInfo.value.day,
-    gender: privatePinInfo.value.gender === "Man" ? "M" : "F",
-    additional_info: "",
     phone: cus.phone,
     address: cus.address,
     city: cus.city,
     postal_code: cus.postal_code,
     country: cus.country,
-  } as unknown as UserProfilesDto;
+  } as UserProfilesDto;
 
   const customerr = {
     type: cus.type,
@@ -290,8 +277,8 @@ function mapCustomerToValuesPrivate(email: string) {
     email: email,
     phone: cus.phone,
     organization_number: cus.organization_number,
-    address: cus.address,
-    postal_code: cus.postal_code,
+    // address: cus.address,
+    // postal_code: cus.postal_code,
     city: cus.city,
     country: cus.country,
   } as unknown as Customer;

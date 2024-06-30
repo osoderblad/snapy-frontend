@@ -1,7 +1,7 @@
 <template>
   <Form
     @submit="onSubmitBusiness"
-    :validation-schema="schemaPrivate"
+    :validation-schema="schemaBusiness"
     class="flex flex-col"
   >
     <div class="w-full max-w-lg px-4 py-10">
@@ -62,7 +62,7 @@
 
         <div class="flex flex-col md:flex-row md:space-x-4">
           <FormField
-            name="business_name"
+            name="name"
             label="Företagsnamn"
             :modelValue="customer.name"
             @update:modelValue="(value) => (customer.name = value)"
@@ -186,10 +186,10 @@ const ssnValidation = yup.string().test(
   }
 );
 
-const schemaPrivate = yup.object({
+const schemaBusiness = yup.object({
   firstName: yup.string().required("Förnamn är obligatoriskt"),
   lastName: yup.string().required("Efternamn är obligatoriskt"),
-  name: yup.string().required("Namn är obligatoriskt"),
+  name: yup.string().required("Företagsnamn är obligatoriskt"),
   phone: yup.string().required(),
   organization_number: ssnValidation.required(
     "Organisationsnummer är obligatoriskt"
@@ -286,11 +286,10 @@ function mapCustomerToValuesPrivate(email: string) {
 
   const customerr = {
     type: cus.type,
-    name: `${cus.firstName} ${cus.lastName}`,
+    name: cus.name,
     email: email,
     phone: cus.phone,
     organization_number: cus.organization_number,
-    pin: cus.pin,
     address: cus.address,
     postal_code: cus.postal_code,
     city: cus.city,

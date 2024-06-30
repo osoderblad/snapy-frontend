@@ -44,7 +44,7 @@
           <tbody>
             <tr v-for="(item, index) in domains" :key="index">
               <td v-for="column in columns" :key="column.key">
-                {{ item[column.key] }}
+                {{ item[column.key as keyof typeof item] }}
               </td>
               <td>
                 <button

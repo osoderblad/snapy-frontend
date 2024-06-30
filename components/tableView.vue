@@ -35,23 +35,32 @@
                 @click="column.sortable ? sortBy(column.key) : null"
               >
                 {{ column.label }}
-                <span v-if="sortColumn.value === column.key">
-                  {{ sortDirection.value === "asc" ? "↑" : "↓" }}
+                <span v-if="sortColumn === column.key">
+                  {{ sortDirection === "asc" ? "↑" : "↓" }}
                 </span>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in domains" :key="item.id">
+            <tr v-for="(item, index) in domains" :key="index">
               <td v-for="column in columns" :key="column.key">
                 {{ item[column.key] }}
               </td>
               <td>
                 <button
+                  v-if="
+                    !myBookings?.data?.some((i) => i.domain_name == item.name)
+                  "
                   class="btn btn-ghost bg-[#1D2234] btn-sm rounded-full"
                   @click="openModal(item)"
                 >
                   Boka
+                </button>
+                <button
+                  v-else
+                  class="btn btn-ghost bg-[#1D2234] btn-sm rounded-full"
+                >
+                  <CheckIcon class="w-5 h-5 text-green-500"></CheckIcon>
                 </button>
               </td>
             </tr>
@@ -82,13 +91,14 @@
 <script setup lang="ts">
 import { getAllDomains, GetCount } from "~/helpers/supabasehelper";
 import { DomainColumns } from "~/helpers/domains/domainhelper";
+import { CheckIcon } from "@heroicons/vue/24/solid";
 import type {
   CombinedDomainInfo,
   CombinedDomainInfoModal,
 } from "~/types/bardate_domains";
 import { useScroll, watchDebounced } from "@vueuse/core";
-
 import { ref, onMounted } from "vue";
+import type { Snapback_Order } from "~/types/snapback_orders";
 const modelIsOpen = ref(false);
 const selectedItem = ref<CombinedDomainInfoModal | null>(null);
 const columns = DomainColumns;
@@ -97,25 +107,26 @@ const el = ref(null);
 const pageSize = 30;
 const domains = ref([] as CombinedDomainInfo[]);
 const q = ref("");
-const count = ref(0);
+const count = ref<number | null>(0);
 const sortColumn = ref("");
-const sortDirection = ref("");
+const sortDirection = ref<"desc" | "asc">("asc");
 const currentPage = ref(1);
 const totalItems = ref(0);
-const behavior = computed(() => "smooth");
-const { x, y, isScrolling, arrivedState, directions } = useScroll(el, {
-  behavior,
-});
-const { left, right, top, bottom } = toRefs(arrivedState);
+const myBookings = ref<{ data: Snapback_Order[] | null; error: any }>();
+const { arrivedState } = useScroll(el, {});
+const { bottom } = toRefs(arrivedState);
+
 const isLastPage = computed(() => {
   const maxPage = Math.ceil(totalItems.value / pageSize);
+  if (!count.value) return true;
+
   if (count.value < pageSize) {
     return true;
   }
   return currentPage.value >= maxPage;
 });
 
-async function updatePage(page) {
+async function updatePage(page: number) {
   isBusy.value = true;
   currentPage.value = page;
   const from = (currentPage.value - 1) * pageSize;
@@ -125,7 +136,6 @@ async function updatePage(page) {
 }
 
 async function openModal(item: any) {
-  // item.isBooked = await IsBooked(item.id);
   selectedItem.value = item;
   modelIsOpen.value = true;
 }
@@ -133,14 +143,21 @@ async function openModal(item: any) {
 function closeModal() {
   modelIsOpen.value = false;
   selectedItem.value = null;
+  getBookedDomains().then((res) => {
+    myBookings.value = res;
+  });
 }
 
-onMounted(async () => {
-  totalItems.value = await GetCount();
-  await updatePage(1);
+onMounted(() => {
+  GetCount().then((res) => (totalItems.value = res));
+  updatePage(1);
+
+  getBookedDomains().then((res) => {
+    myBookings.value = res;
+  });
 });
 
-async function getDomains(from, to, q) {
+async function getDomains(from: number, to: number, q: string) {
   isBusy.value = true;
   const res = await getAllDomains(
     from,
@@ -179,7 +196,7 @@ watch(bottom, async (newValue) => {
   }
 });
 
-const sortBy = (key) => {
+const sortBy = (key: any) => {
   if (sortColumn.value === key) {
     sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
   } else {
@@ -187,10 +204,4 @@ const sortBy = (key) => {
     sortDirection.value = "asc";
   }
 };
-
-// function toggleModal(): void {
-//   showModal.value = !showModal.value;
-// }
 </script>
-
-<style></style>

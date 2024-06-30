@@ -22,7 +22,10 @@ export async function getCustomerIdByUserId() {
   return null;
 }
 
-export async function getBookedDomains() {
+export async function getBookedDomains(): Promise<{
+  data: Snapback_Order[] | null;
+  error: any;
+}> {
   const client = useSupabaseWrapper();
   const user_id = await getCustomerIdByUserId();
   const { data, error } = await client

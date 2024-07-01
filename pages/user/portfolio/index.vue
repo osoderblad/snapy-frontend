@@ -21,6 +21,12 @@
           >
             Bokade domäner
           </h2>
+          <div class="max-w-md">
+            Vid utgånget datum för domän kommer vi att göra ett köp av domänen.
+            Vid ett lyckat köp/registrering kommer domänen att flyttas till ditt
+            konto.
+          </div>
+
           <li
             class="w-full max-w-2xl px-4 my-3 py-3 bg-indigo-400/30 rounded-lg shadow-lg"
             v-for="item in bookedDomains"
@@ -51,6 +57,10 @@
           >
             Köpta/Vunna domäner 🎉
           </h2>
+          <div class="max-w-md">
+            Här hittar du domäner som vi har köpt åt dig. Domäner som vi har
+            köpt åt dig kommer att flyttas till ditt konto.
+          </div>
           <li
             class="w-full max-w-2xl px-4 my-3 py-3 bg-fuchsia-400/30 rounded-lg shadow-lg"
             v-for="item in completedDomains"

@@ -427,7 +427,7 @@ aside {
 /* nytt */
 section {
   padding: 70px 30px;
-  padding-top: 90px;
+  padding-top: 130px;
   min-height: 100vh;
   max-width: 1300px;
   width: 100%;
@@ -546,6 +546,14 @@ header {
 @media screen and (max-width: 768px) {
   section {
     padding: 70px 15px;
-    padding-top: 90px;
+    padding-top: 110px;
   }
+}
+
+.dropdown.dropdown-open .dropdown-content,
+.dropdown.dropdown-hover:hover .dropdown-content,
+.dropdown:not(.dropdown-hover):focus .dropdown-content,
+.dropdown:not(.dropdown-hover):focus-within .dropdown-content {
+  visibility: visible;
+  opacity: 1;
 }

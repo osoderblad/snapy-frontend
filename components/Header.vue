@@ -12,7 +12,7 @@
       </div>
 
       <div class="dropdown lg:hidden block">
-        <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+        <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-5 w-5"
@@ -29,19 +29,17 @@
           </svg>
         </div>
         <ul
-          tabindex="0"
+          tabIndex="0"
           class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
         >
           <li class="links links-side" v-for="link in topNavLinks">
             <NuxtLink
+              @click="handleClick"
               :to="link.to"
               v-text="link.label"
               class="mr-2 no-underline mb-1"
             />
           </li>
-          <!-- <li><a>Homepage</a></li>
-          <li><a>Portfolio</a></li>
-          <li><a>About</a></li> -->
         </ul>
       </div>
 
@@ -59,10 +57,10 @@
           <div
             tabindex="0"
             role="button"
-            class="btn btn-ghost btn-circle avatar border-2 border-[#612FA8] p-[0.3px] bg-[#322353] hover:border-"
+            class="btn btn-ghost btn-circle avatar border-2 border-[#612FA8] p-[0.3px] bg-[#322353]"
           >
-            <div class="w-10 rounded-full">
-              <img alt="Tailwind CSS Navbar component" src="/user.svg" />
+            <div class="w-7 rounded-full">
+              <img alt="user svg" src="/user.svg" />
             </div>
           </div>
           <ul
@@ -113,6 +111,12 @@ const topNavLinks = computed(() => {
     return (!requiresLogin || user.value) && !profileMenu;
   });
 });
+const handleClick = () => {
+  const elem = document.activeElement;
+  if (elem) {
+    elem?.blur();
+  }
+};
 
 const userLinks = computed(() => {
   return props.links.filter((link: any) => {

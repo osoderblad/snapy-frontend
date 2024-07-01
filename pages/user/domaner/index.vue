@@ -1,7 +1,11 @@
 <template>
   <section>
     <div class="w-full m-auto">
-      <h3>Domäner</h3>
+      <h2
+        class="bg-gradient-to-br from-orange-500 to-yellow-300 bg-clip-text text-transparent font-bold"
+      >
+        Domäner
+      </h2>
 
       <ClientOnly>
         <TableView :class="!accountCompleted && 'disabled'"></TableView>

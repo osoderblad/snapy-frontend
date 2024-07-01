@@ -71,11 +71,16 @@
               user?.email
             }}</span>
             <li v-for="link in userLinks" class="mb-1">
-              <NuxtLink :to="link.to" v-text="link.label" />
+              <NuxtLink
+                @click="handleClick"
+                :to="link.to"
+                v-text="link.label"
+              />
             </li>
             <li>
               <NuxtLink
                 v-if="!user"
+                @click="handleClick"
                 to="/login"
                 class="opacity-60 no-underline"
               >
@@ -102,6 +107,7 @@ const client = useSupabaseClient();
 
 function logout() {
   client.auth.signOut();
+  handleClick();
   navigateTo("/");
 }
 const topNavLinks = computed(() => {
@@ -112,7 +118,7 @@ const topNavLinks = computed(() => {
   });
 });
 const handleClick = () => {
-  const elem = document.activeElement;
+  const elem = document.activeElement as any;
   if (elem) {
     elem?.blur();
   }

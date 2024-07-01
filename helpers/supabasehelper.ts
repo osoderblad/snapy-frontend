@@ -65,7 +65,7 @@ export async function GetCount() {
 
 export type UserCustomer = {
   User: UserProfilesView;
-  Customer: CustomerView;
+  Customers: CustomerView[];
 };
 
 // Uppdaterad getAllDomains funktion för att inkludera sökning

@@ -11,7 +11,7 @@
         </NuxtLink>
       </div>
 
-      <div class="dropdown lg:hidden block">
+      <div class="dropdown lg:hidden block dropdown-end dropdown-bottom">
         <div role="button" tabindex="0" class="btn btn-ghost btn-circle">
           <svg
             xmlns="http://www.w3.org/2000/svg"

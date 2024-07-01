@@ -68,4 +68,5 @@ export type CustomerView = {
   invoice_email: string;
   namesrs_id: number; // NameSRS Contact ID
   fortnox_customer_number: number; // Fortnox Customer Number
+  role: string;
 };

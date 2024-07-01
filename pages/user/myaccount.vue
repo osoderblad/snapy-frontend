@@ -7,8 +7,12 @@
     <div v-if="userCustomer?.Customer" class="mb-6">
       <h4>
         Kundinformation
-        <span v-if="userCustomer.Customer.type === 'Private'">(Privat)</span>
-        <span v-if="userCustomer.Customer.type === 'Business'">(Företag)</span>
+        <span v-if="userCustomer.Customer.type === 'Private'"
+          >(Privatkund)</span
+        >
+        <span v-if="userCustomer.Customer.type === 'Business'"
+          >(Företagskund)</span
+        >
       </h4>
 
       <ElementInputAndLabel

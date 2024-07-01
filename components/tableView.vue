@@ -115,6 +115,7 @@ const totalItems = ref(0);
 const myBookings = ref<{ data: Snapback_Order[] | null; error: any }>();
 const { arrivedState } = useScroll(el, {});
 const { bottom } = toRefs(arrivedState);
+const { getBookedDomains } = useDomains();
 
 const isLastPage = computed(() => {
   const maxPage = Math.ceil(totalItems.value / pageSize);

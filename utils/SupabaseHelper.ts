@@ -22,18 +22,6 @@ export async function getCustomerIdByUserId() {
   return null;
 }
 
-export async function getBookedDomains(): Promise<{
-  data: Snapback_Order[] | null;
-  error: any;
-}> {
-  const client = useSupabaseWrapper();
-  const user_id = await getCustomerIdByUserId();
-  const { data, error } = await client
-    .select<Snapback_Order[]>("snapback_orders", "*")
-    .eq("customer_id", user_id);
-  return { data, error };
-}
-
 export async function IsAccountCompleted() {
   const user = useSupabaseUser();
   if (user && !user.value) {

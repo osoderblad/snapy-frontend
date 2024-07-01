@@ -95,7 +95,7 @@ const links = [
     needLoggedIn: false,
   },
   {
-    label: "Bokade domäner",
+    label: "Portfolio",
     icon: BriefcaseIcon,
     to: "/user/portfolio",
     profileMenu: false,

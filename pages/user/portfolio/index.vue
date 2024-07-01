@@ -6,7 +6,7 @@
           <span class="loading loading-infinity loading-lg opacity-60"></span>
         </div>
 
-        <div v-if="loaded && bookedDomains.length == 0">
+        <div v-if="loaded && bookedDomains && bookedDomains.length == 0">
           <h3>Inga domäner bokade ännu!</h3>
           <p>
             Det ser ut som att du inte har bokat några domäner ännu. Gå till
@@ -15,7 +15,7 @@
           </p>
         </div>
 
-        <ul v-if="loaded && bookedDomains.length > 0">
+        <ul v-if="loaded && bookedDomains && bookedDomains.length > 0">
           <h2
             class="bg-gradient-to-br from-orange-500 to-yellow-300 bg-clip-text text-transparent font-bold"
           >
@@ -35,13 +35,17 @@
                 {{ getDate(item.order_time) }}
               </span>
               <span
-                ><span class="text-xs"> Pris:</span> {{ item.price }} kr</span
+                ><span class="text-xs"> Pris:</span>
+                {{ numberWithThousandSpace(item.price) }} kr</span
               >
             </div>
           </li>
         </ul>
 
-        <ul v-if="loaded && completedDomains.length > 0" class="mt-16">
+        <ul
+          v-if="loaded && completedDomains && completedDomains.length > 0"
+          class="mt-16"
+        >
           <h2
             class="bg-gradient-to-br from-orange-500 to-yellow-300 bg-clip-text text-transparent font-bold"
           >
@@ -60,38 +64,41 @@
                 <span class="text-xs"> Köpt:</span>
                 {{ getDate(item.order_time) }}
               </span>
-              <!-- <span
-                ><span class="text-xs"> Status:</span>
-                {{ item.order_status }}</span
-              > -->
               <span
-                ><span class="text-xs"> Pris:</span> {{ item.price }} kr</span
+                ><span class="text-xs"> Pris:</span>
+                {{ numberWithThousandSpace(item.price) }} kr</span
               >
             </div>
 
-            <div class="my-5">
+            <div
+              class="my-5 p-2 rounded-md max-w-md"
+              :class="isPaid(item) ? 'bg-green-300/40' : 'bg-red-300/40'"
+            >
               <h4 class="mb-0 nunito">
                 Faktura <span class="italic text-md">xxx</span>
               </h4>
-
-              <div v-if="item.payment_status === 'Pending'">
-                <span
-                  class="bg-red-200 text-red-800 text-sm p-2 rounded-md font-bold my-2 block w-fit"
-                  >Obetald</span
-                >
+              <div v-if="isPaymentPending(item)">
+                <span>Obetald</span>
               </div>
-
-              <div v-if="item.payment_status === 'Paid'">
-                <span
-                  class="bg-green-200 text-green-800 text-sm p-2 rounded-md font-bold my-2 block w-fit"
-                  >Betald</span
-                >
+              <div v-if="isPaid(item)">
+                <span>Betald</span>
               </div>
-
               <span
                 class="btn btn-sm my-3"
-                :class="item.payment_status === 'Paid' ? 'bg-opacity-80' : ''"
+                :class="isPaid(item) ? 'bg-opacity-80' : ''"
                 >Ladda ner faktura
+              </span>
+
+              <span
+                class="btn btn-sm my-3 ml-2 btn-ghost bg-[#1D2234]"
+                v-if="isPaymentPending(item)"
+                >Betala med Swish
+              </span>
+
+              <span
+                class="btn btn-sm my-3 ml-2 btn-ghost bg-[#1D2234]"
+                v-if="isPaid(item)"
+                >Ladda ner Kvitto
               </span>
             </div>
           </li>
@@ -110,22 +117,32 @@
 
 <script setup lang="ts">
 import type { Snapback_Order } from "~/types/snapback_orders";
-
-const bookedDomains = ref<Snapback_Order[]>([]);
+const bookedDomains = ref<Snapback_Order[] | null>([]);
+const completedDomains = ref<Snapback_Order[] | null>([]);
 const { getBookedDomains, getCompletedDomains } = useDomains();
-const completedDomains = ref<Snapback_Order[]>([]);
 const loaded = ref(false);
 const accountCompleted = useState("accountCompleted");
 
-onMounted(async () => {
-  const { data, error } = await getBookedDomains();
-  const { data: domains } = await getCompletedDomains();
+function isPaid(item: Snapback_Order) {
+  return item.payment_status === "Paid";
+}
+function isPaymentPending(item: Snapback_Order) {
+  return item.payment_status === "Pending";
+}
 
-  if (!error) {
-    loaded.value = true;
-    bookedDomains.value = data;
-    completedDomains.value = domains;
+onMounted(async () => {
+  const { data: bookedData, error: bookedError } = await getBookedDomains();
+  const { data: completedData, error: completedError } =
+    await getCompletedDomains();
+
+  if (!bookedError) {
+    bookedDomains.value = bookedData;
   }
+  if (!completedError) {
+    completedDomains.value = completedData;
+  }
+
+  loaded.value = true;
 });
 
 function getDate(date: string) {

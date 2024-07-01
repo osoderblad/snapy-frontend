@@ -1,4 +1,7 @@
-export function numberWithThousandSpace(x: number) {
+export function numberWithThousandSpace(x: number | null) {
+  if (!x) {
+    return "";
+  }
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 

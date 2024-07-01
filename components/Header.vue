@@ -57,7 +57,7 @@
           <div
             tabindex="0"
             role="button"
-            class="btn btn-ghost btn-circle avatar border-2 border-[#612FA8] p-[0.3px] bg-[#322353]"
+            class="btn btn-ghost btn-circle avatar border-2 border-[#612FA8] p-[0.3px] bg-[#322353] min-h-[2.5rem] h-[2.5rem]"
           >
             <div class="w-7 rounded-full">
               <img alt="user svg" src="/user.svg" />

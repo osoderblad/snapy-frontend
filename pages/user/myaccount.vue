@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="w-full m-auto">
-      <h3>Mitt Konto!</h3>
+      <h3>Mitt Konto</h3>
     </div>
 
     <div v-if="userCustomer?.Customer" class="mb-6">

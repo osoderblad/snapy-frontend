@@ -24,9 +24,42 @@
             <h4 class="mb-2">
               {{ item.domain_name }}
             </h4>
-            <p>{{ item.order_time }}</p>
-            <p>{{ item.order_status }}</p>
-            <p>{{ item.price }}</p>
+
+            <div class="flex gap-x-3 flex-wrap">
+              <span v-if="item.order_time">
+                <span class="text-xs"> Bokad:</span>
+                {{ getBoughtDate(item.order_time) }}
+              </span>
+              <span
+                ><span class="text-xs"> Status:</span>
+                {{ item.order_status }}</span
+              >
+              <span><span class="text-xs"> Pris:</span> {{ item.price }}</span>
+            </div>
+          </li>
+        </ul>
+
+        <ul v-if="loaded && bookedDomains.length > 0" class="mt-16">
+          <h3>Köpta domäner</h3>
+          <li
+            class="w-full max-w-2xl px-4 my-3 py-3 bg-secondary/30 rounded-lg shadow-lg"
+            v-for="item in bookedDomains"
+          >
+            <h4 class="mb-2">
+              {{ item.domain_name }}
+            </h4>
+
+            <div class="flex gap-x-3 flex-wrap">
+              <span v-if="item.order_time">
+                <span class="text-xs"> Köpt:</span>
+                {{ getBoughtDate(item.order_time) }}
+              </span>
+              <span
+                ><span class="text-xs"> Status:</span>
+                {{ item.order_status }}</span
+              >
+              <span><span class="text-xs"> Pris:</span> {{ item.price }}</span>
+            </div>
           </li>
         </ul>
       </div>
@@ -56,4 +89,9 @@ onMounted(async () => {
     bookedDomains.value = data;
   }
 });
+
+function getBoughtDate(date: string) {
+  if (!date) return "";
+  return date.split("T")[0];
+}
 </script>

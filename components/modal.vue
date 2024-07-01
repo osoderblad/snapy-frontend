@@ -34,26 +34,25 @@
                   <span class="loading loading-spinner"></span>
                 </div>
               </div>
-
               <div v-if="loaded">
                 <div v-if="!isBooked">
                   <DialogTitle as="span" class="text-lg font-medium leading-6"
                     >Vill du boka <strong>{{ item.name }}</strong
                     >?
                   </DialogTitle>
-                  <div class="mt-2">
-                    <p class="text-sm">
-                      {{ item.info_created_at }}
-                    </p>
-                  </div>
-
-                  <div class="bg-[#ba3742] text-red-100 rounded-lg p-3">
+                  <div class="bg-[#ba3742] text-red-100 rounded-lg p-3 mt-2">
                     <h4 class="mb-1 mt-0 text-lg">Tänk på</h4>
                     <ul class="list-disc ml-5 text-sm">
                       <li>Det är bindande att boka en domän</li>
                       <li>Domänen kan inte avbokas</li>
                       <li>Domänen kan inte bytas</li>
                       <li>Domänen kan inte återbetalas</li>
+                      <li v-if="domainPrice">
+                        Priset för domänen är
+                        <span class="underline font-bold"
+                          >{{ numberWithThousandSpace(domainPrice) }} kr</span
+                        >
+                      </li>
                     </ul>
                   </div>
 
@@ -81,7 +80,6 @@
                     </button>
                   </div>
                 </div>
-
                 <div v-if="isBooked">
                   <DialogTitle as="span" class="text-lg font-medium leading-6"
                     >Tyvärr, <strong>{{ item.name }}</strong> är redan bokad
@@ -116,6 +114,7 @@ import {
   DialogTitle,
 } from "@headlessui/vue";
 import type { Snapback_Order } from "~/types/snapback_orders";
+import { calculateDomainPrice } from "~/helpers/webhelper";
 const emit = defineEmits(["close"]);
 const { notify } = useNotifier();
 const props = defineProps<{
@@ -126,10 +125,19 @@ const client = useSupabaseWrapper();
 const isBooked = ref(false);
 const consent = ref(false);
 const loaded = ref(false);
+const domainPrice = ref<number | undefined>(undefined);
 
-onMounted(async () => {
-  isBooked.value = await IsBooked(props.item.id);
-  loaded.value = true;
+onMounted(() => {
+  IsBooked(props.item.id).then((res) => {
+    isBooked.value = res;
+    loaded.value = true;
+    if (!isBooked.value) {
+      //prod
+      // const release_at = calculateDaysUntilRelease(props.item.release_at);
+      const price = calculateDomainPrice(props.item.days_until_release);
+      domainPrice.value = price;
+    }
+  });
 });
 
 function close() {
@@ -152,7 +160,6 @@ async function IsBooked(id: bigint) {
 
 const bookIt = async () => {
   const user_id = await getCustomerIdByUserId();
-
   const snapbackorder = {
     customer_id: user_id,
     domain_id: props.item.id,
@@ -160,12 +167,12 @@ const bookIt = async () => {
     order_status: "Pending",
     order_time: new Date(),
     payment_status: "Pending",
-    price: 1337,
+    price: domainPrice.value,
   } as unknown as Snapback_Order;
 
-  const res = client.insert("snapback_orders", snapbackorder);
+  const { error } = await client.insert("snapback_orders", snapbackorder);
 
-  if (res !== null) {
+  if (!error) {
     notify("Din domän är bokad! Tack för din bokning!");
     emit("close");
     return;

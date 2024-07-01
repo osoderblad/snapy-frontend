@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h2>Prenumerationer</h2>
+    <h2 class="text-center mb-10">Prenumeration</h2>
     <template v-if="loaded">
       <SubModule v-if="!sub"></SubModule>
       <SubHelper

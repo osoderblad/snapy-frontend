@@ -1,8 +1,8 @@
 <template>
-  <div class="text-sm max-w-md">
+  <div class="text-sm max-w-md m-auto bg-secondary/20 p-2 rounded-lg">
     <div id="prenumeration">
       <div class="text-center my-2">
-        <h3>{{ sub.name }}</h3>
+        <h3 class="mb-0">{{ sub.name }}</h3>
         <span class="text-lg">
           {{ sub.plan?.amount && sub.plan?.amount / 100 }}
           <span class="font-bold">
@@ -68,7 +68,7 @@
               ? 'btn-error bg-[#e9343e]  text-white'
               : 'btn-success bg-[#25a335]  text-white',
           ]"
-          class="btn btn-md border-none my-2"
+          class="btn btn-sm border-none my-4"
           @click="subOrUnsub()"
         >
           <template v-if="!sub?.cancel_at_period_end">
